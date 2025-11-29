@@ -24,4 +24,6 @@ dist-ssr
 *.sw?
 
 # PocketBase
-pb
+pb/CHANGELOG.md
+pb/LICENSE.md
+pb/pocketbase.exe
