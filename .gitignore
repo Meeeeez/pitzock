@@ -27,3 +27,6 @@ dist-ssr
 pb/CHANGELOG.md
 pb/LICENSE.md
 pb/pocketbase.exe
+
+# Env files
+.env.*
