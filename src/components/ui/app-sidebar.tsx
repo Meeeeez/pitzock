@@ -27,9 +27,13 @@ const data = {
   }
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+interface AppSidebarProps {
+  date: Date | undefined;
+  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  props?: React.ComponentProps<typeof Sidebar>;
+}
 
+export function AppSidebar({ date, setDate, props }: AppSidebarProps) {
   return (
     <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
