@@ -9,7 +9,8 @@ interface AreaRowProps {
 export function AreaRow({ children, className }: AreaRowProps) {
   return (
     <TableRow className={`bg-accent border-t-2 ${className}`}>
-      <TableCell colSpan={999} className="font-sm font-semibold">{children}</TableCell>
+      <TableCell className="sticky left-0 z-10 font-sm font-semibold">{children}</TableCell>
+      <TableCell colSpan={999} />
     </TableRow>
   )
 }
