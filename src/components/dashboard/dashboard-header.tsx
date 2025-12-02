@@ -1,5 +1,3 @@
-import { Separator } from "./ui/separator";
-
 interface DashboardHeaderProps {
   date: Date | undefined;
 }
@@ -14,12 +12,8 @@ export function DashboardHeader({ date }: DashboardHeaderProps) {
   })
 
   return (
-    <>
-      <div className="p-4">
-        <h1 className="text-xl font-semibold">{localeDate}</h1>
-      </div>
-      <Separator />
-    </>
-
+    <div className="p-4">
+      <h1 className="text-xl font-semibold">{localeDate}</h1>
+    </div>
   )
 }
