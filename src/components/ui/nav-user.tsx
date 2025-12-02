@@ -27,6 +27,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import pb from "@/lib/pocketbase"
+import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
 export function NavUser({
   user,
@@ -37,7 +40,14 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const navigate = useNavigate()
   const { isMobile } = useSidebar()
+
+  const logout = () => {
+    pb.authStore.clear()
+    navigate("/login")
+    toast.success("Logged out successfully!")
+  }
 
   return (
     <SidebarMenu>
@@ -100,7 +110,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={logout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
