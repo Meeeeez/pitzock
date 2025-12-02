@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   Command,
+  SettingsIcon,
 } from "lucide-react"
 
 import { NavUser } from "@/components/ui/nav-user"
@@ -27,13 +28,13 @@ const data = {
   }
 }
 
-interface AppSidebarProps {
+interface DashboardSidebarProps {
   date: Date | undefined;
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   props?: React.ComponentProps<typeof Sidebar>;
 }
 
-export function AppSidebar({ date, setDate, props }: AppSidebarProps) {
+export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps) {
   return (
     <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
@@ -70,6 +71,7 @@ export function AppSidebar({ date, setDate, props }: AppSidebarProps) {
           <Button>New Booking</Button>
         </div>
       </SidebarContent>
+      <Separator />
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>

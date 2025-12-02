@@ -3,10 +3,9 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { Route, Routes } from "react-router";
-import { Dashboard } from "./pages/dashboard";
-import { RootLayout } from "./layouts/RootLayout";
 import Login from './pages/login';
 import { ProtectedRoutes } from './lib/protected-routes';
+import { Dashboard } from './pages/dashboard';
 
 export default function App() {
   const queryClient = new QueryClient()
@@ -17,9 +16,7 @@ export default function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoutes />}>
-          <Route element={<RootLayout />}>
-            <Route index element={<Dashboard />} />
-          </Route>
+          <Route index element={<Dashboard />} />
         </Route>
       </Routes>
     </QueryClientProvider>
