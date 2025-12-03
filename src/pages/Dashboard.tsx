@@ -18,7 +18,7 @@ export function Dashboard() {
   return (
     <SidebarProvider>
       <DashboardSidebar date={date} setDate={setDate} />
-      <SidebarInset className="overflow-hidden">
+      <SidebarInset id="hallo" className="overflow-hidden h-screen">
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
@@ -32,10 +32,10 @@ export function Dashboard() {
 
         <Separator className="my-1" />
 
-        <Tabs defaultValue="timeline">
+        <Tabs id="loter" defaultValue="timeline" className="h-full overflow-hidden">
           <DashboardHeader />
           <Separator />
-          <TabsContent value="timeline">
+          <TabsContent value="timeline" className="overflow-auto">
             <DashboardReservationTimeline date={date} />
           </TabsContent>
           <TabsContent value="a&s">Change your password here.</TabsContent>
