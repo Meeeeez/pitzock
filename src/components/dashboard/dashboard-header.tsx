@@ -1,8 +1,11 @@
-import { AddAreaDialog } from "../ui/dialogs/add-area-dialog";
+import { useState } from "react";
+import { AddEditAreaDialog } from "../ui/dialogs/add-edit-area-dialog";
 import { AddStationDialog } from "../ui/dialogs/add-station-dialog";
 import { TabsList, TabsTrigger } from "../ui/tabs";
 
 export function DashboardHeader() {
+  const [areaDialogOpen, setAreaDialogOpen] = useState(false);
+
   return (
     <div className="flex justify-between items-center p-4">
       <div className="flex items-center gap-2">
@@ -14,7 +17,7 @@ export function DashboardHeader() {
       </div>
       <div className="flex items-center gap-2">
         <AddStationDialog />
-        <AddAreaDialog />
+        <AddEditAreaDialog withTrigger mode="ADD" dialogOpen={areaDialogOpen} setDialogOpen={setAreaDialogOpen} />
       </div>
     </div>
   )

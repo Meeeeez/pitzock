@@ -13,8 +13,6 @@ export const useCreateArea = () => {
 
   return useMutation({
     mutationFn: async (data: CreateAreaInput) => {
-      if (!pb.authStore.isValid) throw new Error("Not authenticated");
-
       return await pb.collection("areas").create({
         ...data,
         businessId: pb.authStore.record?.id
