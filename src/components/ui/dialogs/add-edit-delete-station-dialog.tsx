@@ -14,63 +14,70 @@ import { Button } from "../button";
 import { Switch } from "../switch";
 import { Spinner } from "../spinner";
 import { Separator } from "../separator";
-import type { TArea } from "@/lib/types/area";
-import { useEditArea } from "@/hooks/area/use-edit-area";
-import { useCreateArea } from "@/hooks/area/use-create-area";
-import { useDeleteArea } from "@/hooks/area/use-delete-area";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
+import type { TStation } from "@/lib/types/station";
+import { useEditStation } from "@/hooks/station/use-edit-station";
+import { useDeleteStation } from "@/hooks/station/use-delete-station";
+import { useCreateStation } from "@/hooks/station/use-create-station";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
+import { useGetAreasByBusiness } from "@/hooks/area/use-get-areas-by-business";
 
 
-interface AddEditDeleteAreaDialogProps {
+interface AddEditDeleteStationDialogProps {
   mode: 'EDIT' | 'ADD';
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
   withTrigger?: boolean;
-  editData?: Omit<TArea, "created" | "updated">,
+  editData?: Omit<TStation, "created" | "updated">,
 }
 
-export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditDeleteAreaDialogProps) {
+export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditDeleteStationDialogProps) {
   const [name, setName] = useState("");
-  const [allowsPets, setAllowsPets] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  const [areaId, setAreaId] = useState("");
+  const [capacity, setCapacity] = useState(0);
+  const [isActive, setIsActive] = useState(true);
+
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
 
-  const editAreaMutation = useEditArea();
-  const deleteAreaMutation = useDeleteArea();
-  const createAreaMutation = useCreateArea();
+  const { data: areas } = useGetAreasByBusiness();
 
-  const isPending = createAreaMutation.isPending || editAreaMutation.isPending || deleteAreaMutation.isPending;
+  const editStationMutation = useEditStation();
+  const deleteStationMutation = useDeleteStation();
+  const createStationMutation = useCreateStation();
+
+  const isPending = editStationMutation.isPending || deleteStationMutation.isPending || createStationMutation.isPending;
 
   useEffect(() => {
     if (mode == "EDIT") {
       if (!editData) return;
       setName(editData.name);
-      setAllowsPets(editData.allowsPets);
+      setCapacity(editData.capacity);
       setIsActive(editData.isActive);
+      setAreaId(editData.areaId);
     }
   }, [])
 
-  const createArea = (e: FormEvent<HTMLFormElement>) => {
+  const createStation = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) return;
-    createAreaMutation.mutate(
-      { name, allowsPets, isActive },
+    createStationMutation.mutate(
+      { name, areaId, capacity, isActive },
       { onSuccess: () => setDialogOpen(false) });
   };
 
-  const editArea = (e: FormEvent<HTMLFormElement>) => {
+  const editStation = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const areaId = editData?.id;
-    if (!name.trim() || !areaId) return;
-    editAreaMutation.mutate(
-      { id: areaId, name, allowsPets, isActive },
+    const stationId = editData?.id;
+    if (!name.trim() || !stationId) return;
+    editStationMutation.mutate(
+      { id: stationId, areaId, name, capacity, isActive },
       { onSuccess: () => setDialogOpen(false) });
   };
 
-  const deleteArea = () => {
-    const areaId = editData?.id;
-    if (!areaId) return;
-    deleteAreaMutation.mutate(areaId);
+  const deleteStation = () => {
+    const stationId = editData?.id;
+    if (!stationId) return;
+    deleteStationMutation.mutate(stationId);
   }
 
   return (
@@ -79,7 +86,7 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
         <DialogTrigger asChild>
           <Button variant="outline">
             <PlusIcon />
-            Add Area
+            Add Station
           </Button>
         </DialogTrigger>
       )}
@@ -87,44 +94,62 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
         <DialogHeader>
           {mode === "ADD" ? (
             <>
-              <DialogTitle>Add a new Area</DialogTitle>
+              <DialogTitle>Add a new Station</DialogTitle>
               <DialogDescription>
-                Areas are sections of your business that contain multiple stations.
-                An area can represent a physical location, a department, or any other logical grouping of stations.
+                Stations represent individual service points inside an area such as tables, rooms or workstations.
+                Each station holds its own reservations and availability.
               </DialogDescription>
             </>
           ) : (
             <>
-              <DialogTitle>Edit Area</DialogTitle>
+              <DialogTitle>Edit Station</DialogTitle>
               <DialogDescription>
-                Edit the details of this area, including its name, activity status, and whether pets are allowed.
-                Changes will update the area immediately in the system.
+                Edit the details of this station, including its name, activity status, the capacity, and which area it belongs to.
               </DialogDescription>
             </>
           )}
 
         </DialogHeader>
-        <form onSubmit={mode === "ADD" ? createArea : editArea} className="space-y-4">
+        <form onSubmit={mode === "ADD" ? createStation : editStation} className="space-y-4">
           <div className="flex justify-between items-center">
             <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               type="text"
-              placeholder="Area 01"
+              placeholder="Station 1"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="max-w-[250px] self-end"
+              className="w-[250px] self-end"
             />
           </div>
           <div className="flex justify-between items-center">
-            <Label htmlFor="petsAllowed">Are pets allowed in this area?</Label>
-            <div className="flex items-center gap-2">
-              No <Switch id="petsAllowed" checked={allowsPets} onCheckedChange={setAllowsPets} /> Yes
-            </div>
+            <Label htmlFor="capacity">Capacity</Label>
+            <Input
+              id="capacity"
+              type="number"
+              placeholder="3"
+              value={capacity}
+              onChange={(e) => setCapacity(parseInt(e.target.value))}
+              required
+              className="w-[250px] self-end"
+            />
           </div>
           <div className="flex justify-between items-center">
-            <Label htmlFor="isActive">Is this area currently active?</Label>
+            <Label htmlFor="petsAllowed">In which area is this station?</Label>
+            <Select value={areaId} onValueChange={setAreaId}>
+              <SelectTrigger className="w-[250px]">
+                <SelectValue placeholder="Select area..." />
+              </SelectTrigger>
+              <SelectContent>
+                {areas?.map((area, i) => {
+                  return <SelectItem value={area.id} key={i}>{area.name}</SelectItem>
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="isActive">Is this station currently active?</Label>
             <div className="flex items-center gap-2">
               No <Switch id="isActive" checked={isActive} onCheckedChange={setIsActive} /> Yes
             </div>
@@ -132,7 +157,7 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
               {isPending ? <Spinner /> : mode === "ADD" ? <PlusIcon /> : <PencilIcon />}
-              {mode === "ADD" ? "Add Area" : "Save Changes"}
+              {mode === "ADD" ? "Add Station" : "Save Changes"}
             </Button>
           </DialogFooter>
         </form>
@@ -151,9 +176,9 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
             </div>
 
             <DialogHeader>
-              <DialogTitle>Delete Area</DialogTitle>
+              <DialogTitle>Delete Station</DialogTitle>
               <DialogDescription>
-                Deleting this area will permanently remove it and all of its stations.
+                Deleting this station will permanently remove it.
                 This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
@@ -168,7 +193,7 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
                     <Button type="button" variant="outline" onClick={() => setConfirmingDeletion(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={deleteArea} variant="destructive" type="button">
+                    <Button onClick={deleteStation} variant="destructive" type="button">
                       <TrashIcon />
                       Yes, Delete
                     </Button>
@@ -183,7 +208,7 @@ export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen,
                     onClick={() => setConfirmingDeletion(true)}
                   >
                     <TrashIcon />
-                    Delete Area and associated Stations
+                    Delete Station
                   </Button>
                 </>
               )}

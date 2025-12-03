@@ -2,7 +2,7 @@ import pb from '@/lib/pocketbase';
 import type { TArea } from '@/lib/types/area';
 import { useQuery } from '@tanstack/react-query';
 
-export function useAreas() {
+export function useGetAreasByBusiness() {
   const businessId = pb.authStore.record?.id;
 
   return useQuery({

@@ -4,22 +4,32 @@ import { Table, TableHeader, TableRow, TableBody } from "../ui/table";
 import { AreaRow } from "./table/AreaRow";
 import { StationRow } from "./table/StationRow";
 import { TimeHeader } from "./table/TimeHeader";
-import { useAreas } from "@/hooks/use-areas";
+import { useGetAreasByBusiness } from "@/hooks/area/use-get-areas-by-business";
+import { useGetStationsByBusiness } from "@/hooks/station/use-get-stations-by-business";
+import type { TStation } from "@/lib/types/station";
 
 interface DashboardReservationTimelineProps {
   date: Date | undefined;
 }
 
 export default function DashboardReservationTimeline({ date }: DashboardReservationTimelineProps) {
-  const { data: areas, isPending } = useAreas();
+  const { data: areas, isPending: areasPending } = useGetAreasByBusiness();
+  const { data: stations, isPending: stationsPending } = useGetStationsByBusiness();
 
-  if (isPending) {
+  if (areasPending || stationsPending) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <Spinner />
       </div>
     )
   }
+
+  const stationsByArea = stations?.reduce((acc, station) => {
+    const key = station.areaId;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(station);
+    return acc;
+  }, {} as Record<string, TStation[]>);
 
   return (
     <Table>
@@ -33,14 +43,18 @@ export default function DashboardReservationTimeline({ date }: DashboardReservat
         </TableRow>
       </TableHeader>
       <TableBody>
-        {areas?.map((area, i) => (
-          <Fragment key={area.id || i}>
-            <AreaRow area={area} />
-            {[...Array(5)].map((_, j) => (
-              <StationRow key={j}>{j}</StationRow>
-            ))}
-          </Fragment>
-        ))}
+        {areas?.map(a => {
+          const stations = stationsByArea?.[a.id] ?? [];
+
+          return (
+            <Fragment key={a.id}>
+              <AreaRow area={a} />
+              {stations.map(s => (
+                <StationRow station={s} areaOfStation={a} key={s.id} />
+              ))}
+            </Fragment>
+          );
+        })}
       </TableBody>
     </Table>
   )
