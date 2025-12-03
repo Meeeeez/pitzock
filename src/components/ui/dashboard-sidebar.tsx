@@ -3,7 +3,6 @@
 import * as React from "react"
 import {
   Command,
-  SettingsIcon,
 } from "lucide-react"
 
 import { NavUser } from "@/components/ui/nav-user"
