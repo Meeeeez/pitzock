@@ -1,4 +1,4 @@
-import { AddEditAreaDialog } from "@/components/ui/dialogs/add-edit-area-dialog";
+import { AddEditAreaDialog } from "@/components/ui/dialogs/add-edit-delete-area-dialog";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { TArea } from "@/lib/types/area";
 import { useState, type ComponentProps } from "react";

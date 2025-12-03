@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AddEditAreaDialog } from "../ui/dialogs/add-edit-area-dialog";
+import { AddEditAreaDialog } from "../ui/dialogs/add-edit-delete-area-dialog";
 import { AddStationDialog } from "../ui/dialogs/add-station-dialog";
 import { TabsList, TabsTrigger } from "../ui/tabs";
 

@@ -8,19 +8,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../button";
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Label } from "../label";
 import { Input } from "../input";
-import { Spinner } from "../spinner";
+import { Button } from "../button";
 import { Switch } from "../switch";
+import { Spinner } from "../spinner";
+import { Separator } from "../separator";
+import type { TArea } from "@/lib/types/area";
 import { useEditArea } from "@/hooks/use-edit-area";
 import { useCreateArea } from "@/hooks/use-create-area";
-import type { TArea } from "@/lib/types/area";
-import { Separator } from "../separator";
 import { useDeleteArea } from "@/hooks/use-delete-area";
+import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
-interface AddEditAreaDialog {
+
+interface AddEditDeleteAreaDialogProps {
   mode: 'EDIT' | 'ADD';
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -28,7 +29,7 @@ interface AddEditAreaDialog {
   editData?: Omit<TArea, "created" | "updated">,
 }
 
-export function AddEditAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditAreaDialog) {
+export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditDeleteAreaDialogProps) {
   const [name, setName] = useState("");
   const [allowsPets, setAllowsPets] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -37,7 +38,6 @@ export function AddEditAreaDialog({ mode, withTrigger = false, dialogOpen, setDi
   const editAreaMutation = useEditArea();
   const deleteAreaMutation = useDeleteArea();
   const createAreaMutation = useCreateArea();
-
 
   const isPending = createAreaMutation.isPending || editAreaMutation.isPending || deleteAreaMutation.isPending;
 
@@ -135,60 +135,62 @@ export function AddEditAreaDialog({ mode, withTrigger = false, dialogOpen, setDi
               {mode === "ADD" ? "Add Area" : "Save Changes"}
             </Button>
           </DialogFooter>
-          {mode === "EDIT" && (
-            <>
-              <div className="relative flex items-center my-4">
-                <div className="grow">
-                  <Separator />
-                </div>
-                <span className="mx-4 text-xs text-muted-foreground">OR</span>
-                <div className="grow">
-                  <Separator />
-                </div>
-              </div>
-
-              <DialogHeader>
-                <DialogTitle>Delete Area</DialogTitle>
-                <DialogDescription>
-                  Deleting this area will permanently remove it and all of its stations.
-                  This action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-
-              <DialogFooter className="flex w-full justify-between!">
-                {confirmDeletion ? (
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-sm text-red-600 mr-2">
-                      Are you sure? This cannot be undone.
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <Button type="button" variant="outline" onClick={() => setConfirmingDeletion(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={deleteArea} variant="destructive" type="button">
-                        <TrashIcon />
-                        Yes, Delete
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div></div>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={() => setConfirmingDeletion(true)}
-                    >
-                      <TrashIcon />
-                      Delete Area and associated Stations
-                    </Button>
-                  </>
-                )}
-              </DialogFooter>
-            </>
-          )}
-
         </form>
+
+        {/*Delete Dialog */}
+        {mode === "EDIT" && (
+          <>
+            <div className="relative flex items-center my-4">
+              <div className="grow">
+                <Separator />
+              </div>
+              <span className="mx-4 text-xs text-muted-foreground">OR</span>
+              <div className="grow">
+                <Separator />
+              </div>
+            </div>
+
+            <DialogHeader>
+              <DialogTitle>Delete Area</DialogTitle>
+              <DialogDescription>
+                Deleting this area will permanently remove it and all of its stations.
+                This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+
+            <DialogFooter className="flex w-full justify-between!">
+              {confirmDeletion ? (
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm text-red-600 mr-2">
+                    Are you sure? This cannot be undone.
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <Button type="button" variant="outline" onClick={() => setConfirmingDeletion(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={deleteArea} variant="destructive" type="button">
+                      <TrashIcon />
+                      Yes, Delete
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div></div>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => setConfirmingDeletion(true)}
+                  >
+                    <TrashIcon />
+                    Delete Area and associated Stations
+                  </Button>
+                </>
+              )}
+            </DialogFooter>
+          </>
+        )}
+
       </DialogContent>
     </Dialog>
   );
