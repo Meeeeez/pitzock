@@ -5,7 +5,7 @@ import { PlusIcon } from "lucide-react";
 export function AddStationDialog() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant={"outline"}>
           <PlusIcon />
           Add Station

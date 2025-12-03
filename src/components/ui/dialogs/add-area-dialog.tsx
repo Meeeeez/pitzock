@@ -37,7 +37,7 @@ export function AddAreaDialog() {
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant={"outline"}>
           <PlusIcon />
           Add Area
