@@ -18,8 +18,8 @@ export function AddAreaDialog() {
   const [isActive, setIsActive] = useState(false);
 
   const createAreaMutation = useMutation({
-    mutationFn: () => {
-      return pb.collection("areas").create({
+    mutationFn: async () => {
+      return await pb.collection("areas").create({
         name: name,
         allowsPets: allowsPets,
         isActive: isActive,
