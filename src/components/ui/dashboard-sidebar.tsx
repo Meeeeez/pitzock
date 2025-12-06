@@ -18,6 +18,7 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { AddReservationDialog } from "./dialogs/add-reservation-dialog"
 
 const data = {
   user: {
@@ -66,8 +67,8 @@ export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps
         </div>
 
         <div className="flex flex-col gap-2">
-          <Button variant="outline">Walk in</Button>
-          <Button>New Booking</Button>
+          {/* <Button variant="outline">Walk in</Button> */}
+          <AddReservationDialog />
         </div>
       </SidebarContent>
       <Separator />
