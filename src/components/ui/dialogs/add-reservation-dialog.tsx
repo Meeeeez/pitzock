@@ -34,13 +34,25 @@ export function AddReservationDialog() {
             {/* Name */}
             <div className="flex justify-between items-center">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" placeholder="Mario Rossi" required className="max-w-[300px]" />
+              <Input
+                id="name"
+                name="name"
+                placeholder="Mario Rossi"
+                required
+                className="max-w-[300px]"
+                autoComplete="off" />
             </div>
 
             {/* Email */}
             <div className="flex justify-between items-center">
               <Label htmlFor="name">Email</Label>
-              <Input id="email" name="email" placeholder="mail@example.com" type="email" required className="max-w-[300px]" />
+              <Input
+                id="email"
+                name="email"
+                placeholder="mail@example.com"
+                type="email"
+                required
+                className="max-w-[300px]" />
             </div>
 
             {/* Pax */}
@@ -109,7 +121,12 @@ export function AddReservationDialog() {
             {/* Notes */}
             <div className="flex justify-between items-start">
               <Label htmlFor="notes">Notes</Label>
-              <Textarea id="notes" name="notes" placeholder="Additional notes..." className="max-w-[300px]" />
+              <Textarea
+                id="notes"
+                name="notes"
+                placeholder="Additional notes..."
+                className="max-w-[300px]"
+                autoComplete="off" />
             </div>
 
             <div className="space-y-2">
