@@ -1,3 +1,5 @@
+/// <reference path="..\..\pb_data\types.d.ts" />
+
 onRecordCreateRequest((e) => {
     const body = e.requestInfo().body
 
