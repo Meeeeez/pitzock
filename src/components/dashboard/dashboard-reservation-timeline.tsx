@@ -4,8 +4,8 @@ import { Table, TableHeader, TableRow, TableBody } from "../ui/table";
 import { AreaRow } from "./table/AreaRow";
 import { StationRow } from "./table/StationRow";
 import { TimeHeader } from "./table/TimeHeader";
-import { useGetAreasByBusiness } from "@/hooks/area/use-get-areas-by-business";
-import { useGetStationsByBusiness } from "@/hooks/station/use-get-stations-by-business";
+import { useListAreas } from "@/hooks/area/use-list-areas";
+import { useListStations } from "@/hooks/station/use-list-stations";
 import type { TStation } from "@/lib/types/station";
 
 interface DashboardReservationTimelineProps {
@@ -13,8 +13,8 @@ interface DashboardReservationTimelineProps {
 }
 
 export default function DashboardReservationTimeline({ date }: DashboardReservationTimelineProps) {
-  const { data: areas, isPending: areasPending } = useGetAreasByBusiness();
-  const { data: stations, isPending: stationsPending } = useGetStationsByBusiness();
+  const { data: areas, isPending: areasPending } = useListAreas();
+  const { data: stations, isPending: stationsPending } = useListStations();
 
   if (areasPending || stationsPending) {
     return (

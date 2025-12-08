@@ -20,8 +20,7 @@ import { useEditStation } from "@/hooks/station/use-edit-station";
 import { useDeleteStation } from "@/hooks/station/use-delete-station";
 import { useCreateStation } from "@/hooks/station/use-create-station";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
-import { useGetAreasByBusiness } from "@/hooks/area/use-get-areas-by-business";
-
+import { useListAreas } from "@/hooks/area/use-list-areas";
 
 interface AddEditDeleteStationDialogProps {
   mode: 'EDIT' | 'ADD';
@@ -39,7 +38,7 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
 
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
 
-  const { data: areas } = useGetAreasByBusiness();
+  const { data: areas } = useListAreas();
 
   const editStationMutation = useEditStation();
   const deleteStationMutation = useDeleteStation();
