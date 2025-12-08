@@ -23,7 +23,7 @@ export const useCreateArea = () => {
       queryClient.invalidateQueries({ queryKey: ['areas'] });
     },
     onError: (e) => {
-      toast.error("Error creating area. " + e.message);
+      toast.error("Error creating area: " + e.message);
     }
   });
 };
