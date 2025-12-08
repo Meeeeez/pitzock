@@ -19,8 +19,8 @@ export const useCreateStation = () => {
       toast.success("Station created successfully!");
       queryClient.invalidateQueries({ queryKey: ['stations'] });
     },
-    onError: () => {
-      toast.error("Error creating station. Please try again.");
+    onError: (e) => {
+      toast.error("Error creating station. " + e.message);
     }
   });
 };
