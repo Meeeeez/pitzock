@@ -1,7 +1,7 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { ReservationSpan } from "./ReservationSpan";
 import { useState, type ComponentProps } from "react";
-import { AddEditDeleteStationDialog } from "@/components/ui/dialogs/add-edit-delete-station-dialog";
+import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
 import type { TStation } from "@/lib/types/station";
 import type { TArea } from "@/lib/types/area";
 import { CircleXIcon } from "lucide-react";
@@ -17,7 +17,7 @@ export function StationRow({ station, areaOfStation, props }: StationRowProps) {
 
   return (
     <>
-      <AddEditDeleteStationDialog mode="EDIT" editData={station} dialogOpen={editStationDialogOpen} setDialogOpen={setEditStationDialogOpen} />
+      <ManageStationDialog mode="EDIT" editData={station} dialogOpen={editStationDialogOpen} setDialogOpen={setEditStationDialogOpen} />
       <TableRow className={`${props?.className}`}>
         <TableCell
           onClick={() => setEditStationDialogOpen(prev => !prev)}

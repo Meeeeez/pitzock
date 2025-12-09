@@ -26,7 +26,7 @@ import { useCreateStationMerge } from "@/hooks/mergableStation/use-create-statio
 import { useDeleteStationMerge } from "@/hooks/mergableStation/use-delete-station-merge";
 import { useListStationMergesByStation } from "@/hooks/mergableStation/use-list-station-merges-by-station";
 
-interface AddEditDeleteStationDialogProps {
+interface ManageStationDialogProps {
   mode: 'EDIT' | 'ADD';
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -34,7 +34,7 @@ interface AddEditDeleteStationDialogProps {
   editData?: Omit<TStation, "created" | "updated">,
 }
 
-export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditDeleteStationDialogProps) {
+export function ManageStationDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: ManageStationDialogProps) {
   const [name, setName] = useState("");
   const [areaId, setAreaId] = useState("");
   const [capacity, setCapacity] = useState(0);

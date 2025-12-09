@@ -21,7 +21,7 @@ import { useDeleteArea } from "@/hooks/area/use-delete-area";
 import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 
-interface AddEditDeleteAreaDialogProps {
+interface ManageAreaDialogProps {
   mode: 'EDIT' | 'ADD';
   dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -29,7 +29,7 @@ interface AddEditDeleteAreaDialogProps {
   editData?: Omit<TArea, "created" | "updated">,
 }
 
-export function AddEditDeleteAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: AddEditDeleteAreaDialogProps) {
+export function ManageAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: ManageAreaDialogProps) {
   const [name, setName] = useState("");
   const [allowsPets, setAllowsPets] = useState(false);
   const [isActive, setIsActive] = useState(false);

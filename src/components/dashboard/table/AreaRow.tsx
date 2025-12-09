@@ -1,4 +1,4 @@
-import { AddEditDeleteAreaDialog } from "@/components/ui/dialogs/add-edit-delete-area-dialog";
+import { ManageAreaDialog } from "@/components/ui/dialogs/manage-area-dialog";
 import { TableCell, TableRow } from "@/components/ui/table";
 import type { TArea } from "@/lib/types/area";
 import { CircleXIcon } from "lucide-react";
@@ -13,7 +13,7 @@ export function AreaRow({ area, className }: AreaRowProps) {
   const [editAreaDialogOpen, setEditAreaDialogOpen] = useState(false);
   return (
     <>
-      <AddEditDeleteAreaDialog mode="EDIT" editData={area} dialogOpen={editAreaDialogOpen} setDialogOpen={setEditAreaDialogOpen} />
+      <ManageAreaDialog mode="EDIT" editData={area} dialogOpen={editAreaDialogOpen} setDialogOpen={setEditAreaDialogOpen} />
       <TableRow onClick={() => setEditAreaDialogOpen(prev => !prev)} className={`bg-accent border-t-2 hover:cursor-pointer ${!area.isActive && 'bg-red-100 hover:bg-red-50'} ${className}`}>
         <TableCell className="sticky left-0 z-10 font-sm font-semibold">
           <div className="flex items-center gap-2">

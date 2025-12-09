@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { AddEditDeleteAreaDialog } from "../ui/dialogs/add-edit-delete-area-dialog";
-import { AddEditDeleteStationDialog } from "../ui/dialogs/add-edit-delete-station-dialog";
+import { ManageAreaDialog } from "../ui/dialogs/manage-area-dialog";
+import { ManageStationDialog } from "../ui/dialogs/manage-station-dialog";
 import { TabsList, TabsTrigger } from "../ui/tabs";
 
 export function DashboardHeader() {
@@ -17,8 +17,8 @@ export function DashboardHeader() {
         </TabsList>
       </div>
       <div className="flex items-center gap-2">
-        <AddEditDeleteStationDialog withTrigger mode="ADD" dialogOpen={stationDialogOpen} setDialogOpen={setStationDialogOpen} />
-        <AddEditDeleteAreaDialog withTrigger mode="ADD" dialogOpen={areaDialogOpen} setDialogOpen={setAreaDialogOpen} />
+        <ManageStationDialog withTrigger mode="ADD" dialogOpen={stationDialogOpen} setDialogOpen={setStationDialogOpen} />
+        <ManageAreaDialog withTrigger mode="ADD" dialogOpen={areaDialogOpen} setDialogOpen={setAreaDialogOpen} />
       </div>
     </div>
   )
