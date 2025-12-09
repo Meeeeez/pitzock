@@ -81,34 +81,28 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
 
   const editStation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const stationId = editData?.id;
+    if (!editData || !mergableStations) return;
+    const stationId = editData.id;
     if (!name.trim() || !stationId) return;
     const editedStation = await editStationMutation.mutateAsync(
       { id: stationId, areaId, name, capacity, isActive },
       { onSuccess: () => setDialogOpen(false) }
     );
 
-    // 1. DB state
-    const initialMergableIds = mergableStations?.map(s => s.id) ?? [];
+    const previouslySelected = mergableStations.map(s => s.mergableWith) ?? [];
+    const currentlySelected = mergableWith;
 
-    // 2. UI state
-    const newIds = mergableWith;
+    // diff between previouslySelected and currentlySelected
+    const added = currentlySelected.filter(id => !previouslySelected.includes(id));
+    const removed = previouslySelected.filter(id => !currentlySelected.includes(id));
 
-    // 3. Diff
-    const added = newIds.filter(id => !initialMergableIds.includes(id));
-    const removed = initialMergableIds.filter(id => !newIds.includes(id));
+    const removedStationMergeRecordIds = mergableStations
+      .filter(m => removed.includes(m.mergableWith))
+      .map(m => m.id);
 
-    // 4. Apply changes
     await Promise.all([
-      ...added.map(id =>
-        createStationMergeMutation.mutateAsync({
-          stationId: editedStation.id,
-          mergableWith: id,
-        })
-      ),
-      ...removed.map(id =>
-        deleteStationMergeMutation.mutateAsync(id)
-      )
+      ...added.map(id => createStationMergeMutation.mutateAsync({ stationId: editedStation.id, mergableWith: id })),
+      ...removedStationMergeRecordIds.map(id => deleteStationMergeMutation.mutateAsync(id))
     ]);
   };
 
