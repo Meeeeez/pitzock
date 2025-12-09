@@ -21,6 +21,10 @@ import { useDeleteStation } from "@/hooks/station/use-delete-station";
 import { useCreateStation } from "@/hooks/station/use-create-station";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { useListAreas } from "@/hooks/area/use-list-areas";
+import { StationMergeSelect } from "../station-merge-select";
+import { useCreateStationMerge } from "@/hooks/mergableStation/use-create-station-merges-";
+import { useDeleteStationMerge } from "@/hooks/mergableStation/use-delete-station-merge";
+import { useListStationMergesByStation } from "@/hooks/mergableStation/use-list-station-merges-by-station";
 
 interface AddEditDeleteStationDialogProps {
   mode: 'EDIT' | 'ADD';
@@ -35,16 +39,18 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
   const [areaId, setAreaId] = useState("");
   const [capacity, setCapacity] = useState(0);
   const [isActive, setIsActive] = useState(true);
-
+  const [mergableWith, setMergableWith] = useState<string[]>([]);
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
 
   const { data: areas } = useListAreas();
-
   const editStationMutation = useEditStation();
   const deleteStationMutation = useDeleteStation();
   const createStationMutation = useCreateStation();
-
+  const createStationMergeMutation = useCreateStationMerge();
+  const deleteStationMergeMutation = useDeleteStationMerge();
   const isPending = editStationMutation.isPending || deleteStationMutation.isPending || createStationMutation.isPending;
+
+  const { data: mergableStations } = editData ? useListStationMergesByStation(editData.id) : {};
 
   useEffect(() => {
     if (mode == "EDIT") {
@@ -56,27 +62,63 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
     }
   }, [])
 
-  const createStation = (e: FormEvent<HTMLFormElement>) => {
+  const createStation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) return;
-    createStationMutation.mutate(
+    const newStation = await createStationMutation.mutateAsync(
       { name, areaId, capacity, isActive },
-      { onSuccess: () => setDialogOpen(false) });
+      { onSuccess: () => setDialogOpen(false) }
+    );
+    await Promise.all(
+      mergableWith.map(id =>
+        createStationMergeMutation.mutateAsync({
+          stationId: newStation.id,
+          mergableWith: id,
+        })
+      )
+    );
   };
 
-  const editStation = (e: FormEvent<HTMLFormElement>) => {
+  const editStation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const stationId = editData?.id;
     if (!name.trim() || !stationId) return;
-    editStationMutation.mutate(
+    const editedStation = await editStationMutation.mutateAsync(
       { id: stationId, areaId, name, capacity, isActive },
-      { onSuccess: () => setDialogOpen(false) });
+      { onSuccess: () => setDialogOpen(false) }
+    );
+
+    // 1. DB state
+    const initialMergableIds = mergableStations?.map(s => s.id) ?? [];
+
+    // 2. UI state
+    const newIds = mergableWith;
+
+    // 3. Diff
+    const added = newIds.filter(id => !initialMergableIds.includes(id));
+    const removed = initialMergableIds.filter(id => !newIds.includes(id));
+
+    // 4. Apply changes
+    await Promise.all([
+      ...added.map(id =>
+        createStationMergeMutation.mutateAsync({
+          stationId: editedStation.id,
+          mergableWith: id,
+        })
+      ),
+      ...removed.map(id =>
+        deleteStationMergeMutation.mutateAsync(id)
+      )
+    ]);
   };
 
   const deleteStation = () => {
     const stationId = editData?.id;
     if (!stationId) return;
-    deleteStationMutation.mutate(stationId);
+    deleteStationMutation.mutate(
+      stationId,
+      { onSuccess: () => setDialogOpen(false) }
+    );
   }
 
   return (
@@ -110,6 +152,8 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
 
         </DialogHeader>
         <form onSubmit={mode === "ADD" ? createStation : editStation} className="space-y-4">
+
+          {/* Name */}
           <div className="flex justify-between items-center">
             <Label htmlFor="name">Name</Label>
             <Input
@@ -122,6 +166,8 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
               className="w-[250px] self-end"
             />
           </div>
+
+          {/* Capacity */}
           <div className="flex justify-between items-center">
             <Label htmlFor="capacity">Capacity</Label>
             <Input
@@ -134,8 +180,10 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
               className="w-[250px] self-end"
             />
           </div>
+
+          {/* Area Select */}
           <div className="flex justify-between items-center">
-            <Label htmlFor="petsAllowed">In which area is this station?</Label>
+            <Label>In which area is this station?</Label>
             <Select value={areaId} onValueChange={setAreaId}>
               <SelectTrigger className="w-[250px]">
                 <SelectValue placeholder="Select area..." />
@@ -147,6 +195,14 @@ export function AddEditDeleteStationDialog({ mode, withTrigger = false, dialogOp
               </SelectContent>
             </Select>
           </div>
+
+          {/* Mergable with Select */}
+          <div className="flex justify-between items-center">
+            <Label>Can this station be merged with others?</Label>
+            <StationMergeSelect mergableWith={mergableWith} setMergableWith={setMergableWith} stationId={editData?.id} areaId={areaId} />
+          </div>
+
+          {/* Is this station Active? */}
           <div className="flex justify-between items-center">
             <Label htmlFor="isActive">Is this station currently active?</Label>
             <div className="flex items-center gap-2">
