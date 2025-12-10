@@ -1,11 +1,10 @@
 
 
-import * as React from "react"
 import {
   Command,
 } from "lucide-react"
 
-import { NavUser } from "@/components/ui/nav-user"
+import { NavBusiness } from "@/components/ui/nav-business"
 import {
   Sidebar,
   SidebarContent,
@@ -18,7 +17,9 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { AddReservationDialog } from "./dialogs/add-reservation-dialog"
+import ManageClosedPeriodDialog from "./dialogs/manage-closed-period-dialog"
+import { useState } from "react"
+import { ClosedPeriodsTable } from "./closed-periods-table"
 
 const data = {
   user: {
@@ -35,6 +36,7 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps) {
+  const [closedPeriodDialogOpen, setClosedPeriodDialogOpen] = useState(false);
   return (
     <Sidebar variant="sidebar" {...props}>
       <SidebarHeader>
@@ -67,13 +69,15 @@ export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps
         </div>
 
         <div className="flex flex-col gap-2">
-          {/* <Button variant="outline">Walk in</Button> */}
-          <AddReservationDialog />
+          <Separator />
+          <h3 className="text-sm font-semibold mt-2">Business Closure Periods</h3>
+          <ClosedPeriodsTable />
+          <ManageClosedPeriodDialog withTrigger mode="ADD" dialogOpen={closedPeriodDialogOpen} setDialogOpen={setClosedPeriodDialogOpen} />
         </div>
       </SidebarContent>
       <Separator />
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavBusiness user={data.user} />
       </SidebarFooter>
     </Sidebar>
   )

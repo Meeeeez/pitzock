@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import pb from "@/lib/pocketbase";
 import { toast } from "sonner";
-import type { TStationMerge } from "@/lib/types/mergable-station";
+import type { TStationMerge } from "@/lib/types/station-merge";
 
 type TStationMergeCreate = Omit<TStationMerge, 'id' | 'created' | 'updated'>
 

@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { DashboardManageBusiness } from "@/components/dashboard/dashboard-manage-business";
 
 export function Dashboard() {
   const [date, setDate] = useState<Date | undefined>(new Date())
@@ -29,18 +30,17 @@ export function Dashboard() {
             <h1 className="py-4 text-xl font-semibold">{localeDate}</h1>
           </div>
         </header>
-
         <Separator className="my-1" />
-
         <Tabs id="loter" defaultValue="timeline" className="h-full overflow-hidden">
           <DashboardHeader />
           <Separator />
           <TabsContent value="timeline" className="overflow-auto">
             <DashboardReservationTimeline date={date} />
           </TabsContent>
-          <TabsContent value="a&s">Change your password here.</TabsContent>
+          <TabsContent value="a&s">
+            <DashboardManageBusiness />
+          </TabsContent>
         </Tabs>
-
       </SidebarInset>
     </SidebarProvider>
   )

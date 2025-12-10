@@ -2,7 +2,7 @@ export type TReservation = {
   id: string
   clientId: string
   startsAt: string
-  endsAt: boolean
+  endsAt: string
   status: TReservationStatus
   bringsPets: boolean
   notes?: string

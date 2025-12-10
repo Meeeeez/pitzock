@@ -1,7 +1,7 @@
 import { useListStationsByArea } from "@/hooks/station/use-list-stations-by-area";
 import { MultiSelect, MultiSelectContent, MultiSelectGroup, MultiSelectItem, MultiSelectTrigger, MultiSelectValue } from "./multi-select";
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-import { useListStationMergesByStation } from "@/hooks/mergableStation/use-list-station-merges-by-station";
+import { useListStationMergesByStation } from "@/hooks/mergable-station/use-list-station-merges-by-station";
 
 interface StationMergeSelectProps {
   mergableWith: string[];

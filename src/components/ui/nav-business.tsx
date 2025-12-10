@@ -1,8 +1,8 @@
 import {
-  BadgeCheck,
   Bell,
   ChevronsUpDown,
   CreditCard,
+  LockIcon,
   LogOut,
   Sparkles,
 } from "lucide-react"
@@ -31,7 +31,7 @@ import pb from "@/lib/pocketbase"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
-export function NavUser({
+export function NavBusiness({
   user,
 }: {
   user: {
@@ -96,10 +96,6 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard />
                 Billing

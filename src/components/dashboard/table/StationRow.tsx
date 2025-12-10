@@ -21,7 +21,7 @@ export function StationRow({ station, areaOfStation, props }: StationRowProps) {
       <TableRow className={`${props?.className}`}>
         <TableCell
           onClick={() => setEditStationDialogOpen(prev => !prev)}
-          className={`sticky left-0 z-10 bg-accent hover:cursor-pointer hover:bg-accent/50 ${(!station.isActive || !areaOfStation.isActive) && "bg-red-100 hover:bg-red-50"}`}
+          className={`sticky left-0 z-10 bg-accent hover:cursor-pointer hover:bg-neutral-200 ${(!station.isActive || !areaOfStation.isActive) && "bg-red-100 hover:bg-red-50"}`}
         >
           <div className="flex items-center gap-2">
             <span>{station.name} ({station.capacity})</span>

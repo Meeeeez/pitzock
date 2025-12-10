@@ -22,9 +22,9 @@ import { useCreateStation } from "@/hooks/station/use-create-station";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { useListAreas } from "@/hooks/area/use-list-areas";
 import { StationMergeSelect } from "../station-merge-select";
-import { useCreateStationMerge } from "@/hooks/mergableStation/use-create-station-merges-";
-import { useDeleteStationMerge } from "@/hooks/mergableStation/use-delete-station-merge";
-import { useListStationMergesByStation } from "@/hooks/mergableStation/use-list-station-merges-by-station";
+import { useCreateStationMerge } from "@/hooks/mergable-station/use-create-station-merges-";
+import { useDeleteStationMerge } from "@/hooks/mergable-station/use-delete-station-merge";
+import { useListStationMergesByStation } from "@/hooks/mergable-station/use-list-station-merges-by-station";
 
 interface ManageStationDialogProps {
   mode: 'EDIT' | 'ADD';
