@@ -37,7 +37,7 @@ export function Dashboard() {
           <TabsContent value="timeline" className="overflow-auto">
             <DashboardReservationTimeline date={date} />
           </TabsContent>
-          <TabsContent value="a&s">
+          <TabsContent value="manage-business">
             <DashboardManageBusiness />
           </TabsContent>
         </Tabs>
