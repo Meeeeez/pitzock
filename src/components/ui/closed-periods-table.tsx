@@ -2,10 +2,10 @@ import { Spinner } from './spinner';
 import { useListClosedPeriods } from '@/hooks/closed-period/use-list-closed-periods';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import ManageClosedPeriodDialog from './dialogs/manage-closed-period-dialog';
-import { useState } from 'react';
+import { Button } from './button';
+import { PencilIcon } from 'lucide-react';
 
 export function ClosedPeriodsTable() {
-  const [closedPeriodDialogOpen, setClosedPeriodDialogOpen] = useState(false);
   const { data: closedPeriods, isPending } = useListClosedPeriods();
 
   if (isPending) {
@@ -39,19 +39,24 @@ export function ClosedPeriodsTable() {
           <TableHead>#</TableHead>
           <TableHead>From</TableHead>
           <TableHead>To</TableHead>
+          <TableHead className='text-right'>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {closedPeriods.map((cp, i) => {
           return (
-            <>
-              <ManageClosedPeriodDialog mode='EDIT' editData={cp} dialogOpen={closedPeriodDialogOpen} setDialogOpen={setClosedPeriodDialogOpen} />
-              <TableRow key={i} onClick={() => setClosedPeriodDialogOpen(true)} className='hover:bg-neutral-200 hover:cursor-pointer'>
-                <TableCell>{i + 1}</TableCell>
-                <TableCell>{formatDateTime(cp.from)}</TableCell>
-                <TableCell>{formatDateTime(cp.to)}</TableCell>
-              </TableRow>
-            </>
+            <TableRow key={i}>
+              <TableCell>{i + 1}</TableCell>
+              <TableCell>{formatDateTime(cp.from)}</TableCell>
+              <TableCell>{formatDateTime(cp.to)}</TableCell>
+              <TableCell className='text-right'>
+                <ManageClosedPeriodDialog mode='EDIT' editData={cp}>
+                  <Button variant="outline" size="icon">
+                    <PencilIcon />
+                  </Button>
+                </ManageClosedPeriodDialog>
+              </TableCell>
+            </TableRow>
           )
         })}
       </TableBody>

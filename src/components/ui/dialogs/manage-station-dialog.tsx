@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,17 +28,16 @@ import { useListStationMergesByStation } from "@/hooks/mergable-station/use-list
 
 interface ManageStationDialogProps {
   mode: 'EDIT' | 'ADD';
-  dialogOpen: boolean;
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  withTrigger?: boolean;
   editData?: Omit<TStation, "created" | "updated">,
+  children: ReactNode;
 }
 
-export function ManageStationDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: ManageStationDialogProps) {
+export function ManageStationDialog({ mode, editData, children }: ManageStationDialogProps) {
   const [name, setName] = useState("");
   const [areaId, setAreaId] = useState("");
   const [capacity, setCapacity] = useState(0);
   const [isActive, setIsActive] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [mergableWith, setMergableWith] = useState<string[]>([]);
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
 
@@ -117,12 +116,9 @@ export function ManageStationDialog({ mode, withTrigger = false, dialogOpen, set
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      {withTrigger && (
+      {children && (
         <DialogTrigger asChild>
-          <Button variant="outline">
-            <PlusIcon />
-            Add Station
-          </Button>
+          {children}
         </DialogTrigger>
       )}
       <DialogContent>
@@ -264,7 +260,6 @@ export function ManageStationDialog({ mode, withTrigger = false, dialogOpen, set
             </DialogFooter>
           </>
         )}
-
       </DialogContent>
     </Dialog>
   );

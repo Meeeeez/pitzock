@@ -1,7 +1,7 @@
 import { Button } from "../button";
 import { ChevronDownIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../dialog";
-import { useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Label } from "../label";
 import { Input } from "../input";
 import { Spinner } from "../spinner";
@@ -14,19 +14,18 @@ import { useDeleteClosedPeriod } from "@/hooks/closed-period/use-delete-closed-p
 import type { TClosedPeriod } from "@/lib/types/closed-period";
 
 interface ManageClosedPeriodDialogProps {
-  mode: "ADD" | "EDIT";
-  withTrigger?: boolean;
-  dialogOpen: boolean;
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  mode: "ADD" | "EDIT" | "DELETE";
   editData?: Omit<TClosedPeriod, "created" | "updated">,
+  children: ReactNode;
 }
 
-export default function ManageClosedPeriodDialog({ mode, withTrigger, dialogOpen, setDialogOpen, editData }: ManageClosedPeriodDialogProps) {
+export default function ManageClosedPeriodDialog({ mode, editData, children }: ManageClosedPeriodDialogProps) {
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
   const [fromDateTime, setFromDateTime] = useState<Date | undefined>(undefined);
   const [fromDateTimeSelectOpen, setFromDateTimeSelectOpen] = useState(false);
   const [toDateTime, setToDateTime] = useState<Date | undefined>(undefined);
   const [toDateTimeSelectOpen, setToDateTimeSelectOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const createClosedPeriodMutation = useCreateClosedPeriod();
   const editClosedPeriodMutation = useEditClosedPeriod();
@@ -70,12 +69,9 @@ export default function ManageClosedPeriodDialog({ mode, withTrigger, dialogOpen
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      {withTrigger && (
+      {children && (
         <DialogTrigger asChild>
-          <Button variant="outline">
-            <PlusIcon />
-            Add Closed Period
-          </Button>
+          {children}
         </DialogTrigger>
       )}
       <DialogContent>

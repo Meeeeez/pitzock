@@ -1,6 +1,6 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import { ReservationSpan } from "./ReservationSpan";
-import { useState, type ComponentProps } from "react";
+import { type ComponentProps } from "react";
 import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
 import type { TStation } from "@/lib/types/station";
 import type { TArea } from "@/lib/types/area";
@@ -13,14 +13,10 @@ interface StationRowProps {
 }
 
 export function StationRow({ station, areaOfStation, props }: StationRowProps) {
-  const [editStationDialogOpen, setEditStationDialogOpen] = useState(false);
-
   return (
-    <>
-      <ManageStationDialog mode="EDIT" editData={station} dialogOpen={editStationDialogOpen} setDialogOpen={setEditStationDialogOpen} />
+    <ManageStationDialog mode="EDIT" editData={station}>
       <TableRow className={`${props?.className}`}>
         <TableCell
-          onClick={() => setEditStationDialogOpen(prev => !prev)}
           className={`sticky left-0 z-10 bg-accent hover:cursor-pointer hover:bg-neutral-200 ${(!station.isActive || !areaOfStation.isActive) && "bg-red-100 hover:bg-red-50"}`}
         >
           <div className="flex items-center gap-2">
@@ -32,6 +28,6 @@ export function StationRow({ station, areaOfStation, props }: StationRowProps) {
           <ReservationSpan name="Alice Johnson" pax={2} />
         </TableCell>
       </TableRow>
-    </>
+    </ManageStationDialog>
   )
 }

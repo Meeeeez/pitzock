@@ -9,3 +9,6 @@ require(`${__hooks}/clients/onRecordCreateRequest.js`);
 
 // station merges
 require(`${__hooks}/station-merges/onRecordCreateRequest.js`);
+
+// businesses
+require(`${__hooks}/businesses/onRecordUpdateRequest.js`);

@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,17 +23,16 @@ import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 interface ManageAreaDialogProps {
   mode: 'EDIT' | 'ADD';
-  dialogOpen: boolean;
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
-  withTrigger?: boolean;
   editData?: Omit<TArea, "created" | "updated">,
+  children: ReactNode;
 }
 
-export function ManageAreaDialog({ mode, withTrigger = false, dialogOpen, setDialogOpen, editData }: ManageAreaDialogProps) {
+export function ManageAreaDialog({ mode, editData, children }: ManageAreaDialogProps) {
   const [name, setName] = useState("");
   const [allowsPets, setAllowsPets] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const editAreaMutation = useEditArea();
   const deleteAreaMutation = useDeleteArea();
@@ -75,12 +74,9 @@ export function ManageAreaDialog({ mode, withTrigger = false, dialogOpen, setDia
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      {withTrigger && (
+      {children && (
         <DialogTrigger asChild>
-          <Button variant="outline">
-            <PlusIcon />
-            Add Area
-          </Button>
+          {children}
         </DialogTrigger>
       )}
       <DialogContent>
