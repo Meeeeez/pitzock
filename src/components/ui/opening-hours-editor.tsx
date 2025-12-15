@@ -79,8 +79,8 @@ export function OpeningHoursEditor() {
           <Separator />
           {openingHours?.map((slots, i) => {
             return (
-              <>
-                <div key={i} className="flex justify-between">
+              <div key={i}>
+                <div className="flex justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={slots.length !== 0} onCheckedChange={() => toggleWeekday(i)} className="w-6 h-6" />
                     <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export function OpeningHoursEditor() {
                   </div>
                 </div>
                 {(openingHours.length - 1 !== i) && <Separator />}
-              </>
+              </div>
             )
           })}
           <Button onClick={saveOpeningHours} className="w-full">
@@ -120,7 +120,8 @@ export function OpeningHoursEditor() {
             Save Opening Hours
           </Button>
         </CardContent>
-      )}
-    </Card>
+      )
+      }
+    </Card >
   )
 }
