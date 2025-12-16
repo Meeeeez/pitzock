@@ -4,6 +4,7 @@ import { Button } from "./button";
 import { PencilIcon } from "lucide-react";
 import { useListAreas } from "@/hooks/area/use-list-areas";
 import { ManageAreaDialog } from "./dialogs/manage-area-dialog";
+import { EmptyAreas } from "./empty/empty-areas";
 
 export function AreaTable() {
   const { data: areas, isPending } = useListAreas();
@@ -17,7 +18,7 @@ export function AreaTable() {
   }
 
   if (!areas || areas?.length === 0) {
-    return <p className='text-sm'>No Areas yet</p>
+    return <EmptyAreas />
   }
 
   return (

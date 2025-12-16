@@ -30,7 +30,7 @@ interface ManageAreaDialogProps {
 export function ManageAreaDialog({ mode, editData, children }: ManageAreaDialogProps) {
   const [name, setName] = useState("");
   const [allowsPets, setAllowsPets] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 

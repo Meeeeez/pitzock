@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import ManageClosedPeriodDialog from './dialogs/manage-closed-period-dialog';
 import { Button } from './button';
 import { PencilIcon } from 'lucide-react';
+import { EmptyBusinessClosurePeriod } from './empty/empty-business-closure-period';
 
 export function ClosedPeriodsTable() {
   const { data: closedPeriods, isPending } = useListClosedPeriods();
@@ -17,7 +18,7 @@ export function ClosedPeriodsTable() {
   }
 
   if (!closedPeriods || closedPeriods?.length === 0) {
-    return <p className='text-sm'>No Closure Periods yet</p>
+    return <EmptyBusinessClosurePeriod />
   }
 
   const formatDateTime = (iso: string) => {

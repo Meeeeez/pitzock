@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Spinner } from "./spinner";
 import { Button } from "./button";
 import { PencilIcon } from "lucide-react";
+import { EmptyStations } from "./empty/empty-stations";
 
 export function StationTable() {
   const { data: stations, isPending } = useListStations();
@@ -17,7 +18,7 @@ export function StationTable() {
   }
 
   if (!stations || stations?.length === 0) {
-    return <p className='text-sm'>No Stations yet</p>
+    return <EmptyStations />
   }
 
   return (
