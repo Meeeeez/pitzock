@@ -12,15 +12,18 @@ import type { TTimeSlot } from "@/lib/types/business";
 import { BusinessClosed } from "../ui/empty/business-closed";
 import { useGetBusiness } from "@/hooks/business/use-get-business";
 import { BusinessInactive } from "../ui/empty/business-inactive";
+import { useListHolidays } from "@/hooks/holidays/use-list-holidays";
+import { isDateInHoliday } from "@/lib/utils";
 
 interface DashboardReservationTimelineProps {
   selectedDate: Date;
 }
 
 export default function DashboardReservationTimeline({ selectedDate }: DashboardReservationTimelineProps) {
+  const { data: holidays, isPending: holidaysPending } = useListHolidays();
   const { data: areas, isPending: areasPending } = useListAreas();
-  const { data: stations, isPending: stationsPending } = useListStations();
   const { data: business, isPending: businessPending } = useGetBusiness();
+  const { data: stations, isPending: stationsPending } = useListStations();
 
   const [openingHoursAtSelectedDate, setOpeningHoursAtSelectedDate] = useState<TTimeSlot[]>([]);
 
@@ -31,7 +34,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
     setOpeningHoursAtSelectedDate(business.openingHours[selectedWeekday]);
   }, [business, selectedDate])
 
-  if (areasPending || stationsPending || businessPending) {
+  if (areasPending || stationsPending || businessPending || holidaysPending) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <Spinner />
@@ -43,12 +46,12 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
     return <BusinessInactive />
   }
 
-  if (false) {
-    return <BusinessClosed selectedDate={selectedDate} reason="The business is closed on this date according to its configured holidays." />;
+  if (isDateInHoliday(selectedDate, holidays)) {
+    return <BusinessClosed type="HOLIDAYS" selectedDate={selectedDate} />;
   }
 
   if (openingHoursAtSelectedDate.length === 0) {
-    return <BusinessClosed selectedDate={selectedDate} reason="The business is closed on this date according to its configured opening hours." />;
+    return <BusinessClosed type="OPENINGHOURS" selectedDate={selectedDate} />;
   }
 
   const stationsByArea = stations?.reduce((acc, station) => {

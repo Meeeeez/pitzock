@@ -3,10 +3,10 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "..
 
 interface BusinessClosedProps {
   selectedDate: Date;
-  reason: string;
+  type: "HOLIDAYS" | "OPENINGHOURS";
 }
 
-export function BusinessClosed({ selectedDate, reason }: BusinessClosedProps) {
+export function BusinessClosed({ selectedDate, type }: BusinessClosedProps) {
   const selectedDateString = selectedDate.toLocaleDateString("de-DE");
   return (
     <Empty className="flex w-full h-full">
@@ -14,10 +14,22 @@ export function BusinessClosed({ selectedDate, reason }: BusinessClosedProps) {
         <EmptyMedia variant="icon">
           <DoorClosedLockedIcon />
         </EmptyMedia>
-        <EmptyTitle>Business is Closed on {selectedDateString}</EmptyTitle>
-        <EmptyDescription className="min-w-full">
-          {reason}
-        </EmptyDescription>
+        {type === "HOLIDAYS" && (
+          <>
+            <EmptyTitle>Business on holiday on {selectedDateString}</EmptyTitle>
+            <EmptyDescription className="min-w-full">
+              This business was marked as on holiday.
+            </EmptyDescription>
+          </>
+        )}
+        {type === "OPENINGHOURS" && (
+          <>
+            <EmptyTitle>Business is Closed on {selectedDateString}</EmptyTitle>
+            <EmptyDescription className="min-w-full">
+              This business is closed as per its opening hours.
+            </EmptyDescription>
+          </>
+        )}
       </EmptyHeader>
     </Empty>
   )
