@@ -27,8 +27,8 @@ const data = {
 }
 
 interface DashboardSidebarProps {
-  date: Date | undefined;
-  setDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  date: Date;
+  setDate: React.Dispatch<React.SetStateAction<Date>>;
   props?: React.ComponentProps<typeof Sidebar>;
 }
 
@@ -61,6 +61,8 @@ export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps
             selected={date}
             onSelect={setDate}
             className="w-full bg-neutral"
+            weekStartsOn={1}
+            required
           />
         </div>
         <AddReservationDialog />

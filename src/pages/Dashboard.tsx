@@ -8,8 +8,8 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { DashboardManageBusiness } from "@/components/dashboard/dashboard-manage-business";
 
 export function Dashboard() {
-  const [date, setDate] = useState<Date | undefined>(new Date())
-  const localeDate = date?.toLocaleDateString("en-US", {
+  const [selectedDate, setSelectedDate] = useState(new Date())
+  const localeDate = selectedDate?.toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "2-digit",
@@ -18,7 +18,7 @@ export function Dashboard() {
 
   return (
     <SidebarProvider>
-      <DashboardSidebar date={date} setDate={setDate} />
+      <DashboardSidebar date={selectedDate} setDate={setSelectedDate} />
       <SidebarInset id="hallo" className="overflow-hidden h-screen">
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
@@ -35,7 +35,7 @@ export function Dashboard() {
           <DashboardHeader />
           <Separator />
           <TabsContent value="timeline" className="overflow-auto">
-            <DashboardReservationTimeline date={date} />
+            <DashboardReservationTimeline selectedDate={selectedDate} />
           </TabsContent>
           <TabsContent value="manage-business" className="overflow-auto">
             <DashboardManageBusiness />
