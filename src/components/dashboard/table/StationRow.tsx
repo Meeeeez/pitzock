@@ -14,8 +14,8 @@ interface StationRowProps {
 
 export function StationRow({ station, areaOfStation, props }: StationRowProps) {
   return (
-    <ManageStationDialog mode="EDIT" editData={station}>
-      <TableRow className={`${props?.className}`}>
+    <TableRow className={`border-l border-border${props?.className}`}>
+      <ManageStationDialog mode="EDIT" editData={station}>
         <TableCell
           className={`sticky left-0 z-10 bg-accent hover:cursor-pointer hover:bg-neutral-200 ${(!station.isActive || !areaOfStation.isActive) && "bg-red-100 hover:bg-red-50"}`}
         >
@@ -24,10 +24,10 @@ export function StationRow({ station, areaOfStation, props }: StationRowProps) {
             {(!station.isActive) && <CircleXIcon className="w-3 h-3 mt-1" />}
           </div>
         </TableCell>
-        <TableCell colSpan={4} className="px-0">
-          <ReservationSpan name="Alice Johnson" pax={2} />
-        </TableCell>
-      </TableRow>
-    </ManageStationDialog>
+      </ManageStationDialog>
+      <TableCell colSpan={4} className="px-0">
+        <ReservationSpan name="Alice Johnson" pax={2} />
+      </TableCell>
+    </TableRow>
   )
 }
