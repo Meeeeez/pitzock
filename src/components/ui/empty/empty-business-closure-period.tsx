@@ -1,4 +1,4 @@
-import { LandPlot, PlusIcon } from "lucide-react";
+import { DoorClosedLockedIcon, PlusIcon } from "lucide-react";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../empty";
 import { Button } from "../button";
 import ManageClosedPeriodDialog from "../dialogs/manage-closed-period-dialog";
@@ -8,7 +8,7 @@ export function EmptyBusinessClosurePeriod() {
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <LandPlot />
+          <DoorClosedLockedIcon />
         </EmptyMedia>
         <EmptyTitle>No Closed Periods</EmptyTitle>
         <EmptyDescription>
