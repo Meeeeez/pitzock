@@ -75,12 +75,12 @@ export function OpeningHoursEditor() {
           <Spinner />
         </div>
       ) : (
-        <CardContent className="space-y-4">
+        <CardContent>
           <Separator />
           {openingHours?.map((slots, i) => {
             return (
               <div key={i}>
-                <div className="flex justify-between">
+                <div className="flex justify-between py-4">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={slots.length !== 0} onCheckedChange={() => toggleWeekday(i)} className="w-6 h-6" />
                     <div className="flex items-center gap-2">
