@@ -54,6 +54,11 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
     return <BusinessClosed type="OPENINGHOURS" selectedDate={selectedDate} />;
   }
 
+  // make kind of a tutorial where users need to setup the app
+  if (areas?.length === 0 || stations?.length === 0) {
+    return "tutorial"
+  }
+
   const stationsByArea = stations?.reduce((acc, station) => {
     const key = station.areaId;
     if (!acc[key]) acc[key] = [];
