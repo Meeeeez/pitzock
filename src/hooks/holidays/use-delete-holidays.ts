@@ -2,19 +2,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import pb from "@/lib/pocketbase";
 import { toast } from "sonner";
 
-export const useDeleteClosedPeriod = () => {
+export const useDeleteHolidays = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      return await pb.collection("closedPeriods").delete(id);
+      return await pb.collection("holidays").delete(id);
     },
     onSuccess: () => {
-      toast.success("Closed Period deleted successfully!");
-      queryClient.invalidateQueries({ queryKey: ["closedPeriods"] });
+      toast.success("Holidays deleted successfully!");
+      queryClient.invalidateQueries({ queryKey: ["holidays"] });
     },
     onError: (e) => {
-      toast.error("Error deleting closed period: " + e.message);
+      toast.error("Error deleting holidays: " + e.message);
     },
   });
 };

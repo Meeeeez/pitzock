@@ -1,4 +1,4 @@
-export type TClosedPeriod = {
+export type THoliday = {
   id: string
   businessId: string
   from: string

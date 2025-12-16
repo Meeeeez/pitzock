@@ -8,18 +8,18 @@ import { Spinner } from "../spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Calendar } from "../calendar";
 import { Separator } from "../separator";
-import { useCreateClosedPeriod } from "@/hooks/closed-period/use-create-closed-period";
-import { useEditClosedPeriod } from "@/hooks/closed-period/use-edit-closed-period";
-import { useDeleteClosedPeriod } from "@/hooks/closed-period/use-delete-closed-period";
-import type { TClosedPeriod } from "@/lib/types/closed-period";
+import { useCreateHolidays } from "@/hooks/holidays/use-create-holidays";
+import { useEditHolidays } from "@/hooks/holidays/use-edit-holidays";
+import { useDeleteHolidays } from "@/hooks/holidays/use-delete-holidays";
+import type { THoliday } from "@/lib/types/holiday";
 
-interface ManageClosedPeriodDialogProps {
+interface ManageHolidaysDialogProps {
   mode: "ADD" | "EDIT" | "DELETE";
-  editData?: Omit<TClosedPeriod, "created" | "updated">,
+  editData?: Omit<THoliday, "created" | "updated">,
   children: ReactNode;
 }
 
-export default function ManageClosedPeriodDialog({ mode, editData, children }: ManageClosedPeriodDialogProps) {
+export function ManageHolidaysDialog({ mode, editData, children }: ManageHolidaysDialogProps) {
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
   const [fromDateTime, setFromDateTime] = useState<Date | undefined>(undefined);
   const [fromDateTimeSelectOpen, setFromDateTimeSelectOpen] = useState(false);
@@ -27,11 +27,11 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
   const [toDateTimeSelectOpen, setToDateTimeSelectOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const createClosedPeriodMutation = useCreateClosedPeriod();
-  const editClosedPeriodMutation = useEditClosedPeriod();
-  const deleteClosedPeriodMutation = useDeleteClosedPeriod();
+  const createHolidaysMutation = useCreateHolidays();
+  const editHolidaysMutation = useEditHolidays();
+  const deleteHolidaysMutation = useDeleteHolidays();
 
-  const isPending = createClosedPeriodMutation.isPending || editClosedPeriodMutation.isPending || deleteClosedPeriodMutation.isPending;
+  const isPending = createHolidaysMutation.isPending || editHolidaysMutation.isPending || deleteHolidaysMutation.isPending;
 
   useEffect(() => {
     if (mode == "EDIT") {
@@ -41,28 +41,28 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
     }
   }, [])
 
-  const createClosedPeriod = (e: FormEvent<HTMLFormElement>) => {
+  const createHolidays = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!fromDateTime || !toDateTime) return;
-    createClosedPeriodMutation.mutate(
+    createHolidaysMutation.mutate(
       { from: fromDateTime, to: toDateTime },
       { onSuccess: () => setDialogOpen(false) }
     );
   }
 
-  const editClosedPeriod = (e: FormEvent<HTMLFormElement>) => {
+  const editHolidays = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!fromDateTime || !toDateTime || !editData) return;
-    editClosedPeriodMutation.mutate(
+    editHolidaysMutation.mutate(
       { id: editData.id, from: fromDateTime, to: toDateTime },
       { onSuccess: () => setDialogOpen(false) }
     );
   }
 
-  const deleteClosedPeriod = () => {
-    const closedPeriodId = editData?.id;
-    if (!closedPeriodId) return;
-    deleteClosedPeriodMutation.mutate(closedPeriodId, {
+  const deleteHolidays = () => {
+    const holidayId = editData?.id;
+    if (!holidayId) return;
+    deleteHolidaysMutation.mutate(holidayId, {
       onSuccess: () => setDialogOpen(false)
     });
   }
@@ -78,24 +78,24 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
         <DialogHeader>
           {mode === "ADD" ? (
             <>
-              <DialogTitle>Add a new Closed Period</DialogTitle>
+              <DialogTitle>Add a new Holiday</DialogTitle>
               <DialogDescription>
-                Add a new business closure period by entering a start date and time and an end date and time.
+                Add a new holiday by entering a start date and time and an end date and time.
                 <br />
-                Clients will not be able to book when your business is closed.
+                Clients will not be able to book when your business is on holiday.
               </DialogDescription>
             </>
           ) : (
             <>
-              <DialogTitle>Edit Closed Period</DialogTitle>
+              <DialogTitle>Edit Holiday</DialogTitle>
               <DialogDescription>
-                Modify the start and end date and time of an existing business closure period.
+                Modify the start and end date and time of an existing holiday.
               </DialogDescription>
             </>
           )}
 
         </DialogHeader>
-        <form onSubmit={mode === "ADD" ? createClosedPeriod : editClosedPeriod} className="space-y-4">
+        <form onSubmit={mode === "ADD" ? createHolidays : editHolidays} className="space-y-4">
           {/* Start Date & Time */}
           <div className="flex justify-between items-center">
             <Label htmlFor="datetime">Start Date & Time</Label>
@@ -215,7 +215,7 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
           <DialogFooter>
             <Button type="submit" disabled={isPending}>
               {isPending ? <Spinner /> : mode === "ADD" ? <PlusIcon /> : <PencilIcon />}
-              {mode === "ADD" ? "Add closed Period" : "Save Changes"}
+              {mode === "ADD" ? "Add Holiday" : "Save Changes"}
             </Button>
           </DialogFooter>
         </form>
@@ -234,9 +234,9 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
             </div>
 
             <DialogHeader>
-              <DialogTitle>Delete Closed period</DialogTitle>
+              <DialogTitle>Delete Holiday</DialogTitle>
               <DialogDescription>
-                Deletes this closed period.
+                Deletes this holiday.
                 This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
@@ -251,7 +251,7 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
                     <Button type="button" variant="outline" onClick={() => setConfirmingDeletion(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={deleteClosedPeriod} variant="destructive" type="button">
+                    <Button onClick={deleteHolidays} variant="destructive" type="button">
                       <TrashIcon />
                       Yes, Delete
                     </Button>
@@ -266,7 +266,7 @@ export default function ManageClosedPeriodDialog({ mode, editData, children }: M
                     onClick={() => setConfirmingDeletion(true)}
                   >
                     <TrashIcon />
-                    Delete Closed Period
+                    Delete Holiday
                   </Button>
                 </>
               )}

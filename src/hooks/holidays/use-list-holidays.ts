@@ -1,16 +1,16 @@
 import pb from '@/lib/pocketbase';
-import type { TClosedPeriod } from '@/lib/types/closed-period';
+import type { THoliday } from '@/lib/types/holiday';
 import { useQuery } from '@tanstack/react-query';
 
-export function useListClosedPeriods() {
+export function useListHolidays() {
   return useQuery({
-    queryKey: ['closedPeriods'],
+    queryKey: ['holidays'],
     queryFn: async () => {
       const businessId = pb.authStore.record?.id;
       if (!businessId) throw new Error("Unauthorized");
       return await pb
-        .collection('closedPeriods')
-        .getFullList<TClosedPeriod>({ filter: `businessId = "${businessId}"` });
+        .collection('holidays')
+        .getFullList<THoliday>({ filter: `businessId = "${businessId}"` });
     }
   });
 };

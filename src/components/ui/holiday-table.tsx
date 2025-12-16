@@ -1,13 +1,13 @@
 import { Spinner } from './spinner';
-import { useListClosedPeriods } from '@/hooks/closed-period/use-list-closed-periods';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
-import ManageClosedPeriodDialog from './dialogs/manage-closed-period-dialog';
+import { ManageHolidaysDialog } from './dialogs/manage-holidays-dialog';
 import { Button } from './button';
 import { PencilIcon } from 'lucide-react';
-import { EmptyBusinessClosurePeriod } from './empty/empty-business-closure-period';
+import { EmptyHolidays } from './empty/empty-holidays';
+import { useListHolidays } from '@/hooks/holidays/use-list-holidays';
 
-export function ClosedPeriodsTable() {
-  const { data: closedPeriods, isPending } = useListClosedPeriods();
+export function HolidayTable() {
+  const { data: holidays, isPending } = useListHolidays();
 
   if (isPending) {
     return (
@@ -17,8 +17,8 @@ export function ClosedPeriodsTable() {
     )
   }
 
-  if (!closedPeriods || closedPeriods?.length === 0) {
-    return <EmptyBusinessClosurePeriod />
+  if (!holidays || holidays?.length === 0) {
+    return <EmptyHolidays />
   }
 
   const formatDateTime = (iso: string) => {
@@ -44,18 +44,18 @@ export function ClosedPeriodsTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {closedPeriods.map((cp, i) => {
+        {holidays.map((h, i) => {
           return (
             <TableRow key={i}>
               <TableCell>{i + 1}</TableCell>
-              <TableCell>{formatDateTime(cp.from)}</TableCell>
-              <TableCell>{formatDateTime(cp.to)}</TableCell>
+              <TableCell>{formatDateTime(h.from)}</TableCell>
+              <TableCell>{formatDateTime(h.to)}</TableCell>
               <TableCell className='text-right'>
-                <ManageClosedPeriodDialog mode='EDIT' editData={cp}>
+                <ManageHolidaysDialog mode='EDIT' editData={h}>
                   <Button variant="outline" size="icon">
                     <PencilIcon />
                   </Button>
-                </ManageClosedPeriodDialog>
+                </ManageHolidaysDialog>
               </TableCell>
             </TableRow>
           )

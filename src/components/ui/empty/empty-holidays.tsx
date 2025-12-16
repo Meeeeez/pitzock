@@ -1,27 +1,28 @@
 import { DoorClosedLockedIcon, PlusIcon } from "lucide-react";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../empty";
 import { Button } from "../button";
-import ManageClosedPeriodDialog from "../dialogs/manage-closed-period-dialog";
+import { ManageHolidaysDialog } from "../dialogs/manage-holidays-dialog";
 
-export function EmptyBusinessClosurePeriod() {
+export function EmptyHolidays() {
   return (
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <DoorClosedLockedIcon />
         </EmptyMedia>
-        <EmptyTitle>No Closed Periods</EmptyTitle>
+        <EmptyTitle>No Holidays</EmptyTitle>
         <EmptyDescription>
-          If your business is closed for a period of time you can enter it here. Once you entered it, clients can no longer book in this timeslot.
+          Add your holidays here.
+          Clients cannot book in the time when your business is on holiday.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <ManageClosedPeriodDialog mode="ADD">
+        <ManageHolidaysDialog mode="ADD">
           <Button variant="outline" size="sm">
             <PlusIcon />
-            Add Closed Period
+            Add Holidays
           </Button>
-        </ManageClosedPeriodDialog>
+        </ManageHolidaysDialog>
       </EmptyContent>
     </Empty>
   )
