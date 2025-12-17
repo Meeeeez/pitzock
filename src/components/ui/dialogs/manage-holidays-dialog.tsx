@@ -117,6 +117,7 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
                       mode="single"
                       selected={fromDateTime}
                       captionLayout="dropdown"
+                      weekStartsOn={1}
                       onSelect={(date) => {
                         if (!date) return;
                         const currentTime = fromDateTime ? fromDateTime : new Date();
@@ -175,6 +176,7 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
                       mode="single"
                       selected={toDateTime}
                       captionLayout="dropdown"
+                      weekStartsOn={1}
                       onSelect={(date) => {
                         if (!date) return;
                         const currentTime = toDateTime ? toDateTime : new Date();

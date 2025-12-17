@@ -150,6 +150,7 @@ export function AddReservationDialog() {
                         mode="single"
                         selected={startDateTime}
                         captionLayout="dropdown"
+                        weekStartsOn={1}
                         onSelect={(date) => {
                           if (!date) return;
                           const currentTime = startDateTime ? startDateTime : new Date();
@@ -208,6 +209,7 @@ export function AddReservationDialog() {
                         mode="single"
                         selected={endDateTime}
                         captionLayout="dropdown"
+                        weekStartsOn={1}
                         onSelect={(date) => {
                           if (!date) return;
                           const currentTime = endDateTime ? endDateTime : new Date();
