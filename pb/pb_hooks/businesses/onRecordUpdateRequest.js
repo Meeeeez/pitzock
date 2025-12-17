@@ -4,7 +4,7 @@ onRecordUpdateRequest((e) => {
   const body = e.requestInfo().body
 
   const openingHours = JSON.parse(body.openingHours);
-  const hhMmRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  const hhMmRegex = /^(([0-1]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$/;
 
   if (openingHours.length !== 7) {
     throw new BadRequestError("Opening Hours must be an array with seven entries");

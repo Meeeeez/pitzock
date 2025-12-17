@@ -17,7 +17,7 @@ const generateTimeOptions = (step: number): string[] => {
   if (step <= 0) throw new Error("Step needs to be > 0");
   const times: string[] = [];
   times.push("--:--")
-  for (let minutes = 0; minutes < 24 * 60; minutes += step) {
+  for (let minutes = 0; minutes <= 24 * 60; minutes += step) {
     const h = Math.floor(minutes / 60)
       .toString()
       .padStart(2, "0");
