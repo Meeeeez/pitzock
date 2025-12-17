@@ -11,7 +11,6 @@ function getBusinessById(businessId) {
   } catch { return null }
 }
 
-
 /**
  * Checks if the provided business is on holidays during the duration of the reservation.
  * @param {string} businessId The ID of the business.
