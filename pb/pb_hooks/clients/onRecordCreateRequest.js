@@ -1,21 +1,20 @@
 /// <reference path="..\..\pb_data\types.d.ts" />
 
 onRecordCreateRequest((e) => {
-  const body = e.requestInfo().body
-
   // check if a client with this email already exists for this business
-  const existingClient = new DynamicModel({ "id": "" })
+  const email = e.record.getString("email")
+  const businessId = e.record.getString("businessId")
   try {
-    e.app.db()
-      .select("id")
-      .from("clients")
-      .where($dbx.like("email", body.email))
-      .andWhere($dbx.like("businessId", body.businessId))
-      .one(existingClient);
-  } catch (e) { }
-
-  if (existingClient.id) {
+    $app.findFirstRecordByFilter(
+      "clients",
+      "email = {:email} && businessId = {:bid}",
+      { "email": email, "bid": businessId }
+    )
+    // the previous line will always throw if it does not find a row
+    // if this is reached it means that there is already a client with this email on this business
     throw new BadRequestError("A client with this email already exists for this business!");
+  } catch (e) {
+    if (e instanceof BadRequestError) throw e;
   }
 
   e.next()
