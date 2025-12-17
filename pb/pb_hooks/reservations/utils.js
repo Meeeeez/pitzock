@@ -1,3 +1,5 @@
+/// <reference path="..\..\pb_data\types.d.ts" />
+
 /**
  * Finds the business which is associated with the provided businessId.
  * @param {string} businessId The ID of the business.
