@@ -85,7 +85,7 @@ export function OpeningHoursEditor() {
                     <Checkbox checked={slots.length !== 0} onCheckedChange={() => toggleWeekday(i)} className="w-6 h-6" />
                     <div className="flex items-center gap-2">
                       <div className="font-semibold">{weekdays[i]}</div>
-                      {slots.length === 0 && <div className="text-sm">(Closed)</div>}
+                      {slots.length === 0 && <div className="text-sm text-muted-foreground">(Closed)</div>}
                     </div>
                   </div>
                   <div className="space-y-2">
