@@ -17,7 +17,7 @@ function getBusinessById(businessId) {
  * @returns {boolean} Returns true if the business is on holidays during the duration of the reservation.
  */
 function isReservationOverlappingWithBusinessHoliday(businessId, reservation) {
-  const holidays = $app.findRecordsByFilter("holidays", `businessId = "${businessId}"`);
+  const holidays = $app.findRecordsByFilter("holidays", "businessId = {:bid}", "", 0, 0, { bid: businessId });
   if (!holidays || holidays.length === 0) return false
 
   const reservationStart = new Date(reservation.getString("startsAt"))
