@@ -47,7 +47,7 @@ export function ManageAreaDialog({ mode, editData, children }: ManageAreaDialogP
       setAllowsPets(editData.allowsPets);
       setIsActive(editData.isActive);
     }
-  }, [])
+  }, [dialogOpen])
 
   const createArea = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,7 +69,12 @@ export function ManageAreaDialog({ mode, editData, children }: ManageAreaDialogP
   const deleteArea = () => {
     const areaId = editData?.id;
     if (!areaId) return;
-    deleteAreaMutation.mutate(areaId);
+    deleteAreaMutation.mutate(areaId, {
+      onSuccess: () => {
+        setDialogOpen(false)
+        setConfirmingDeletion(false)
+      }
+    });
   }
 
   return (

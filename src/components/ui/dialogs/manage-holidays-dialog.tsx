@@ -39,7 +39,7 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
       setFromDateTime(new Date(editData.from));
       setToDateTime(new Date(editData.to))
     }
-  }, [])
+  }, [dialogOpen])
 
   const createHolidays = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,7 +63,10 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
     const holidayId = editData?.id;
     if (!holidayId) return;
     deleteHolidaysMutation.mutate(holidayId, {
-      onSuccess: () => setDialogOpen(false)
+      onSuccess: () => {
+        setDialogOpen(false)
+        setConfirmingDeletion(false)
+      }
     });
   }
 
