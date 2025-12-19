@@ -14,17 +14,13 @@ import { Button } from "../button";
 import { Switch } from "../switch";
 import { Spinner } from "../spinner";
 import { Separator } from "../separator";
-import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import type { TStation } from "@/lib/types/station";
+import { useListAreas } from "@/hooks/area/use-list-areas";
+import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useEditStation } from "@/hooks/station/use-edit-station";
 import { useDeleteStation } from "@/hooks/station/use-delete-station";
 import { useCreateStation } from "@/hooks/station/use-create-station";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
-import { useListAreas } from "@/hooks/area/use-list-areas";
-import { StationMergeSelect } from "../station-merge-select";
-import { useCreateStationMerge } from "@/hooks/mergable-station/use-create-station-merges-";
-import { useDeleteStationMerge } from "@/hooks/mergable-station/use-delete-station-merge";
-import { useListStationMergesByStation } from "@/hooks/mergable-station/use-list-station-merges-by-station";
 
 interface ManageStationDialogProps {
   mode: 'EDIT' | 'ADD';
@@ -38,18 +34,13 @@ export function ManageStationDialog({ mode, editData, children }: ManageStationD
   const [capacity, setCapacity] = useState(0);
   const [isActive, setIsActive] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [mergableWith, setMergableWith] = useState<string[]>([]);
   const [confirmDeletion, setConfirmingDeletion] = useState(false);
 
   const { data: areas } = useListAreas();
   const editStationMutation = useEditStation();
   const deleteStationMutation = useDeleteStation();
   const createStationMutation = useCreateStation();
-  const createStationMergeMutation = useCreateStationMerge();
-  const deleteStationMergeMutation = useDeleteStationMerge();
   const isPending = editStationMutation.isPending || deleteStationMutation.isPending || createStationMutation.isPending;
-
-  const { data: mergableStations } = editData ? useListStationMergesByStation(editData.id) : {};
 
   useEffect(() => {
     if (mode == "EDIT") {
@@ -59,59 +50,37 @@ export function ManageStationDialog({ mode, editData, children }: ManageStationD
       setIsActive(editData.isActive);
       setAreaId(editData.areaId);
     }
-  }, [])
+  }, [dialogOpen])
 
   const createStation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!name.trim()) return;
-    const newStation = await createStationMutation.mutateAsync(
+    createStationMutation.mutate(
       { name, areaId, capacity, isActive },
       { onSuccess: () => setDialogOpen(false) }
-    );
-    await Promise.all(
-      mergableWith.map(id =>
-        createStationMergeMutation.mutateAsync({
-          stationId: newStation.id,
-          mergableWith: id,
-        })
-      )
     );
   };
 
   const editStation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!editData || !mergableStations) return;
+    if (!editData) return;
     const stationId = editData.id;
     if (!name.trim() || !stationId) return;
-    const editedStation = await editStationMutation.mutateAsync(
+    editStationMutation.mutate(
       { id: stationId, areaId, name, capacity, isActive },
       { onSuccess: () => setDialogOpen(false) }
     );
-
-    const previouslySelected = mergableStations.map(s => s.mergableWith) ?? [];
-    const currentlySelected = mergableWith;
-
-    // diff between previouslySelected and currentlySelected
-    const added = currentlySelected.filter(id => !previouslySelected.includes(id));
-    const removed = previouslySelected.filter(id => !currentlySelected.includes(id));
-
-    const removedStationMergeRecordIds = mergableStations
-      .filter(m => removed.includes(m.mergableWith))
-      .map(m => m.id);
-
-    await Promise.all([
-      ...added.map(id => createStationMergeMutation.mutateAsync({ stationId: editedStation.id, mergableWith: id })),
-      ...removedStationMergeRecordIds.map(id => deleteStationMergeMutation.mutateAsync(id))
-    ]);
   };
 
   const deleteStation = () => {
     const stationId = editData?.id;
     if (!stationId) return;
-    deleteStationMutation.mutate(
-      stationId,
-      { onSuccess: () => setDialogOpen(false) }
-    );
+    deleteStationMutation.mutate(stationId, {
+      onSuccess: () => {
+        setDialogOpen(false)
+        setConfirmingDeletion(false)
+      }
+    });
   }
 
   return (
@@ -184,12 +153,6 @@ export function ManageStationDialog({ mode, editData, children }: ManageStationD
                 })}
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Mergable with Select */}
-          <div className="flex justify-between items-center">
-            <Label>Can this station be merged with others?</Label>
-            <StationMergeSelect mergableWith={mergableWith} setMergableWith={setMergableWith} stationId={editData?.id} areaId={areaId} />
           </div>
 
           {/* Is this station Active? */}

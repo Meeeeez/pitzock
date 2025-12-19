@@ -12,6 +12,18 @@ function getBusinessById(businessId) {
 }
 
 /**
+ * Finds the business which is associated with the provided clientId.
+ * @param {string} clientId The ID of the client.
+ * @returns {Record | null} The db record for this business or null if an error occured.
+ */
+function getBusinessByClientId(clientId) {
+  try {
+    const businessId = $app.findRecordById("clients", clientId).getString("businessId")
+    return $app.findRecordById("businesses", businessId)
+  } catch { return null }
+}
+
+/**
  * Checks if the provided business is on holidays during the duration of the reservation.
  * @param {string} businessId The ID of the business.
  * @param {Record} reservation The reservation record.
@@ -80,6 +92,7 @@ function isReservationWithinOpeningHours(openingHours, reservation) {
 
 module.exports = {
   getBusinessById,
+  getBusinessByClientId,
   isReservationOverlappingWithBusinessHoliday,
   isReservationWithinOpeningHours
 }
