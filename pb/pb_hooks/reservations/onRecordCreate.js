@@ -74,6 +74,7 @@ onRecordCreate((e) => {
         e.record.getString("id")
       )
     }
+    return;
   }
 
   throw new BadRequestError("No suitable station")
