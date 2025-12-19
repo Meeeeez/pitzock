@@ -10,9 +10,12 @@ interface StationRowProps {
   station: TStation;
   areaOfStation: TArea;
   props?: ComponentProps<typeof TableCell>;
+  reservationsByDate: any;
 }
 
-export function StationRow({ station, areaOfStation, props }: StationRowProps) {
+export function StationRow({ station, areaOfStation, props, reservationsByDate }: StationRowProps) {
+  console.log(reservationsByDate)
+  // TODO: find the right place to display the reservation
   return (
     <TableRow className={`border-l border-border${props?.className}`}>
       <ManageStationDialog mode="EDIT" editData={station}>

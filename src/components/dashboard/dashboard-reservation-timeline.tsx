@@ -14,18 +14,20 @@ import { useGetBusiness } from "@/hooks/business/use-get-business";
 import { BusinessInactive } from "../ui/empty/business-inactive";
 import { useListHolidays } from "@/hooks/holidays/use-list-holidays";
 import { isDateInHoliday } from "@/lib/utils";
+import { useListReservationsAtDateByStations } from "@/hooks/reservation/use-list-reservations-at-date-by-stations";
 
 interface DashboardReservationTimelineProps {
   selectedDate: Date;
 }
 
 export default function DashboardReservationTimeline({ selectedDate }: DashboardReservationTimelineProps) {
-  const { data: holidays, isPending: holidaysPending } = useListHolidays();
   const { data: areas, isPending: areasPending } = useListAreas();
   const { data: business, isPending: businessPending } = useGetBusiness();
   const { data: stations, isPending: stationsPending } = useListStations();
-
+  const { data: holidays, isPending: holidaysPending } = useListHolidays();
+  const { data: reservationsAtDateByStations, isPending: reservationsPending } = useListReservationsAtDateByStations(selectedDate);
   const [openingHoursAtSelectedDate, setOpeningHoursAtSelectedDate] = useState<TTimeSlot[]>([]);
+  const isPending = areasPending || stationsPending || businessPending || holidaysPending || reservationsPending;
 
   useEffect(() => {
     if (!business || !business.openingHours) return;
@@ -34,7 +36,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
     setOpeningHoursAtSelectedDate(business.openingHours[selectedWeekday]);
   }, [business, selectedDate])
 
-  if (areasPending || stationsPending || businessPending || holidaysPending) {
+  if (isPending) {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <Spinner />
@@ -80,6 +82,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
                   key={station.id}
                   station={station}
                   areaOfStation={area}
+                  reservationsByDate={reservationsAtDateByStations?.get(station.id)}
                 />
               ))}
             </Fragment>
