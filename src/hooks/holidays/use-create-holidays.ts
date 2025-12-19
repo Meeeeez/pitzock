@@ -12,9 +12,11 @@ export const useCreateHolidays = () => {
 
   return useMutation({
     mutationFn: async (data: CreateHolidaysInput) => {
+      const businessId = pb.authStore.record?.id;
+      if (!businessId) throw new Error("Unauthorized!");
       return await pb.collection("holidays").create({
         ...data,
-        businessId: pb.authStore.record?.id
+        businessId
       });
     },
     onSuccess: () => {
