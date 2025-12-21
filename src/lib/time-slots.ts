@@ -61,12 +61,12 @@ export function flattenOpeningHours(openingHours: TTimeSlot[]): number[] {
  * @param {TReservation[]} reservations all reservations at this date for a certain station
  * @returns 
  */
-export function flattenReservations(reservations: TReservation[]): TReservationWithClientTimesInMinFromMidnight[] {
-  return reservations?.map((res: any) => {
+export function flattenReservations(reservations: TReservation[]) {
+  return reservations?.map((res: TReservation) => {
     const d = new Date(res.startsAt);
     const e = new Date(res.endsAt);
     return {
-      ...res,
+      id: res.id,
       startMins: d.getHours() * 60 + d.getMinutes(),
       endMins: e.getHours() * 60 + e.getMinutes(),
     };

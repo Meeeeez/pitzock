@@ -44,15 +44,18 @@ export function StationRow({ station, reservations, areaOfStation, openingHours 
         }
 
         // Find reservation starting at this exact time slot
-        const res = resTimesInMinFromMidnight?.find((r: any) => r.startMins === tickMins);
-        if (res) {
-          const duration = res.endMins - res.startMins;
+        const resTimes = resTimesInMinFromMidnight?.find((r) => r.startMins === tickMins);
+        const res = reservations.find((r) => r.id === resTimes?.id)
+        const startMins = resTimes?.startMins;
+        const endMins = resTimes?.endMins;
+        if (startMins && endMins && res) {
+          const duration = endMins - startMins;
           const colSpan = Math.round(duration / SLOT_MINUTES);
           // Important: We skip the NEXT (colSpan - 1) cells
           skipCount = colSpan - 1;
           return (
             <TableCell key={`${station.id}-${tickMins}`} colSpan={colSpan} className="p-0 border-none h-12">
-              <ReservationSpan reservation={res} />
+              <ReservationSpan station={station} reservation={res} />
             </TableCell>
           );
         } else {

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Calendar } from "@/components/ui/calendar"
 import { Separator } from "@/components/ui/separator"
-import { AddReservationDialog } from "./dialogs/add-reservation-dialog"
+import { AddReservationDialog } from "./dialogs/reservation/add-reservation-dialog"
 
 const data = {
   user: {

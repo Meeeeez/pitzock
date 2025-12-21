@@ -29,9 +29,9 @@ export function StationEditor() {
         <div>
           <CardTitle>Manage Station Groups</CardTitle>
           <CardDescription>
-            In some cases stations can be merged to increase their capacity.
+            In some cases stations can be combined to increase their capacity.
             For example, in a restaurant, tables can be combined to seat larger groups.
-            If you have stations that can be merged, you can create and manage merge groups here.
+            If you have stations that can be combined, you can create and manage station groups here.
           </CardDescription>
         </div>
 
