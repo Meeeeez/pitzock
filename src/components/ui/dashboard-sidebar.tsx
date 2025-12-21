@@ -1,5 +1,3 @@
-
-
 import {
   Command,
 } from "lucide-react"
@@ -14,7 +12,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Calendar } from "@/components/ui/calendar"
-import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { AddReservationDialog } from "./dialogs/add-reservation-dialog"
 
@@ -55,7 +52,6 @@ export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps
       <Separator className="my-1" />
       <SidebarContent className="justify-between px-2 py-4">
         <div>
-          <Button onClick={() => setDate(new Date())} variant="outline" className="w-full">Today</Button>
           <Calendar
             mode="single"
             selected={date}

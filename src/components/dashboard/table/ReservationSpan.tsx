@@ -12,7 +12,7 @@ export function ReservationSpan({ reservation, className }: ReservationSpanProps
   return (
     <div className={`flex justify-between h-9 rounded px-2 py-1 text-white cursor-pointer hover:opacity-90 transition-opacity bg-emerald-500 overflow-hidden ${className}`}>
       <div className="truncate text-xs font-medium">{reservation.client.name}</div>
-      <div className="flex items-start justify-start gap-2">
+      <div className="flex items-start justify-start gap-1.5">
         {reservation.notes && (
           <Tooltip>
             <TooltipTrigger asChild>
