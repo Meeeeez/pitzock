@@ -1,5 +1,5 @@
 import type { TTimeSlot } from "@/lib/types/business";
-import type { TReservation } from "./types/reservation";
+import type { TReservation, TReservationWithClientTimesInMinFromMidnight } from "./types/reservation";
 
 export const SLOT_MINUTES = 15;
 
@@ -61,7 +61,7 @@ export function flattenOpeningHours(openingHours: TTimeSlot[]): number[] {
  * @param {TReservation[]} reservations all reservations at this date for a certain station
  * @returns 
  */
-export function flattenReservations(reservations: TReservation[]) {
+export function flattenReservations(reservations: TReservation[]): TReservationWithClientTimesInMinFromMidnight[] {
   return reservations?.map((res: any) => {
     const d = new Date(res.startsAt);
     const e = new Date(res.endsAt);

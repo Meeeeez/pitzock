@@ -5,14 +5,14 @@ import { ReservationSpan } from "./ReservationSpan";
 import type { TStation } from "@/lib/types/station";
 import type { TTimeSlot } from "@/lib/types/business";
 import { TableRow, TableCell } from "@/components/ui/table";
-import type { TReservation } from "@/lib/types/reservation";
+import type { TReservationWithClient } from "@/lib/types/reservation";
 import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
 import { flattenOpeningHours, flattenReservations, SLOT_MINUTES } from "@/lib/time-slots";
 
 interface StationRowProps {
   station: TStation;
   props?: ComponentProps<typeof TableCell>;
-  reservations: TReservation[];
+  reservations: TReservationWithClient[];
   areaOfStation: TArea;
   openingHours: TTimeSlot[];
 }
@@ -52,7 +52,7 @@ export function StationRow({ station, reservations, areaOfStation, openingHours 
           skipCount = colSpan - 1;
           return (
             <TableCell key={`${station.id}-${tickMins}`} colSpan={colSpan} className="p-0 border-none h-12">
-              <ReservationSpan name={res.guestName || "Reserved"} pax={res.pax} />
+              <ReservationSpan reservation={res} />
             </TableCell>
           );
         } else {

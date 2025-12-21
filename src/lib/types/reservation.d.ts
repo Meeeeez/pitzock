@@ -1,3 +1,5 @@
+import type { TClient } from "./client"
+
 export type TReservation = {
   id: string
   clientId: string
@@ -12,9 +14,13 @@ export type TReservation = {
   updated: string
 }
 
+export type TReservationWithClient = TReservation & {
+  client: TClient;
+};
+
 export type TReservationStatus = "BOOKED" | "CONFIRMED" | "CANCELLED" | "ARRIVED" | "NOSHOW"
 
-export type TReservationTimesInMinFromMidnight = Omit<TReservation, 'startsAt' | 'endsAt'> & {
+export type TReservationWithClientTimesInMinFromMidnight = Omit<TReservationWithClient, 'startsAt' | 'endsAt'> & {
   startMins: number;
   endMins: number;
 };

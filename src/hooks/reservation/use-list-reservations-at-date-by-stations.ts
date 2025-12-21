@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase';
-import type { TReservation } from '@/lib/types/reservation';
+import type { TReservationWithClient } from '@/lib/types/reservation';
 import { useQuery } from '@tanstack/react-query';
 
 export function useListReservationsAtDateByStations(date: Date) {
@@ -25,17 +25,19 @@ export function useListReservationsAtDateByStations(date: Date) {
 
       const reservationsAtDate = await pb.collection('stationReservations').getFullList({
         filter: filter,
-        expand: "reservationId",
+        expand: "reservationId.clientId",
         sort: "+reservationId.startsAt",
       });
 
       // 3. Manually group them into a clean array of stations
-      const stationsMap = new Map<string, TReservation[]>();
+      const stationsMap = new Map<string, TReservationWithClient[]>();
       for (const res of reservationsAtDate) {
         const reservation = res.expand?.reservationId;
-        if (!reservation) continue;
+        const clientData = reservation.expand?.clientId;
+        if (!reservation || !clientData) continue;
+        const reservationWithClient = { ...reservation, client: clientData };
         if (!stationsMap.has(res.stationId)) stationsMap.set(res.stationId, []);
-        stationsMap.get(res.stationId)?.push(reservation);
+        stationsMap.get(res.stationId)?.push(reservationWithClient);
       }
 
       return stationsMap;
