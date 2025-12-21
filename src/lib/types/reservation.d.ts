@@ -13,3 +13,8 @@ export type TReservation = {
 }
 
 export type TReservationStatus = "BOOKED" | "CONFIRMED" | "CANCELLED" | "ARRIVED" | "NOSHOW"
+
+export type TReservationTimesInMinFromMidnight = Omit<TReservation, 'startsAt' | 'endsAt'> & {
+  startMins: number;
+  endMins: number;
+};

@@ -82,7 +82,8 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
                   key={station.id}
                   station={station}
                   areaOfStation={area}
-                  reservationsByDate={reservationsAtDateByStations?.get(station.id)}
+                  openingHours={openingHoursAtSelectedDate}
+                  reservations={reservationsAtDateByStations?.get(station.id) ?? []}
                 />
               ))}
             </Fragment>

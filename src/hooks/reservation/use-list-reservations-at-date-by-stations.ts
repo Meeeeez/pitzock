@@ -31,7 +31,6 @@ export function useListReservationsAtDateByStations(date: Date) {
 
       // 3. Manually group them into a clean array of stations
       const stationsMap = new Map<string, TReservation[]>();
-      console.log(reservationsAtDate);
       for (const res of reservationsAtDate) {
         const reservation = res.expand?.reservationId;
         if (!reservation) continue;

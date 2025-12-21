@@ -13,7 +13,7 @@ onRecordCreate((e) => {
     e.record.getBool("bringsPets"),
     business.getString("id")
   )
-  if (!areas || areas.length === 0) throw new BadRequestError("No suitable area found")
+  if (!areas || areas.length === 0) throw new BadRequestError("No suitable area")
 
   // get ids of the stations which are busy at the time of the reservation
   const busyIds = engine.getBusyStationsIds(
@@ -39,9 +39,8 @@ onRecordCreate((e) => {
 
   if (bestStation) {
     e.next() // persist reservation
-    // persist station assignment
     engine.assignToStation(
-      bestStation.getString("id"),
+      [bestStation.getString("id")],
       e.record.getString("id")
     )
     return;
@@ -67,13 +66,10 @@ onRecordCreate((e) => {
 
   if (bestMerge) {
     e.next() // persist reservation
-    // persist station assignment
-    for (const memberId of bestMerge.memberIds) {
-      engine.assignToStation(
-        memberId,
-        e.record.getString("id")
-      )
-    }
+    engine.assignToStation(
+      bestMerge.memberIds,
+      e.record.getString("id")
+    )
     return;
   }
 
