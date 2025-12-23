@@ -24,6 +24,10 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
   const [singles, merges] = fittingOptions ?? [[], []];
   const [editMode, setEditMode] = useState(false);
 
+  const saveNewStationAssignment = () => {
+    console.log("TODO: save new reservation assignment. stationreservation onupdate! maybe just delete the old ones and assign the new ones if they work else rollback")
+  }
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
@@ -45,7 +49,7 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Clock className="h-3 w-3" /> Time
               </span>
-              <div className="font-semibold text-sm">
+              <div className="font-semibold text-base">
                 {dateToTime(resStart)} - {dateToTime(resEnd)}
               </div>
             </div>
@@ -54,7 +58,7 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <Users className="h-3 w-3" /> Guests
               </span>
-              <span className="font-semibold text-sm">
+              <span className="font-semibold text-base">
                 {reservation.pax}
               </span>
             </div>
@@ -63,7 +67,7 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
               <span className="text-xs text-muted-foreground flex items-center gap-1">
                 <PawPrintIcon className="h-3 w-3" /> Pets
               </span>
-              <span className={`font-semibold text-sm`}>
+              <span className={`font-semibold text-base`}>
                 {reservation.bringsPets ? "Yes" : "No"}
               </span>
             </div>
@@ -91,9 +95,11 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
               </Button>
             </div>
             {isPending ? (
-              <Spinner />
+              <div className="flex justify-center w-full">
+                <Spinner />
+              </div>
             ) : (
-              <Select defaultValue={station.id} disabled={!editMode}>
+              <Select defaultValue={station.id} disabled={!editMode} onValueChange={saveNewStationAssignment}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a station" />
                 </SelectTrigger>
