@@ -12,6 +12,7 @@ export function useListStations() {
         expand: "areaId",
         filter: `areaId.businessId = "${businessId}"`,
       });
-    }
+    },
+    staleTime: 1000 * 60 * 5
   });
 };

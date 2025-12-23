@@ -11,6 +11,7 @@ export function useListAreas() {
       return await pb
         .collection('areas')
         .getFullList<TArea>({ filter: `businessId = "${businessId}"` });
-    }
+    },
+    staleTime: 1000 * 60 * 5
   });
 };

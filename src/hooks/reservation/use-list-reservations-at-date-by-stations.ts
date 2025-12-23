@@ -104,5 +104,6 @@ export function useListReservationsAtDateByStations(date: Date) {
 
       return stationsMap;
     },
+    staleTime: 1000 * 60 * 5
   });
 }

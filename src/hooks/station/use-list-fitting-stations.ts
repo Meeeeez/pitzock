@@ -32,6 +32,7 @@ export function useListFittingStations(reservation: TReservation, enabled: boole
 
       return [singles, merges];
     },
-    enabled: enabled
+    enabled: enabled,
+    staleTime: 1000 * 60 * 5
   });
 }

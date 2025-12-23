@@ -11,6 +11,7 @@ export function useListHolidays() {
       return await pb
         .collection('holidays')
         .getFullList<THoliday>({ filter: `businessId = "${businessId}"` });
-    }
+    },
+    staleTime: 1000 * 60 * 5
   });
 };

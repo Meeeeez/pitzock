@@ -9,6 +9,7 @@ export function useGetOpeningHours() {
       const businessId = pb.authStore.record?.id;
       if (!businessId) throw new Error("Unauthorized");
       return (await pb.collection('businesses').getOne<TBusiness>(businessId)).openingHours;
-    }
+    },
+    staleTime: 1000 * 60 * 5
   });
 };

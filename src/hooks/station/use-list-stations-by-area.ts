@@ -12,6 +12,7 @@ export function useListStationsByArea(areaId: string) {
         expand: "areaId",
         filter: `areaId.businessId = "${businessId}" && areaId = "${areaId}"`,
       });
-    }
+    },
+    staleTime: 1000 * 60 * 5
   });
 };

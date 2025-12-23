@@ -39,5 +39,6 @@ export function useListMergeGroups() {
 
       return Array.from(groupsMap.values()) as TMergeGroupWithMembers[];
     },
+    staleTime: 1000 * 60 * 5
   });
 }
