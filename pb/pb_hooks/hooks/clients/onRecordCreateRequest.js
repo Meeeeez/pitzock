@@ -8,8 +8,10 @@ onRecordCreateRequest((e) => {
   const clientsWithEmailInBusiness = $app.findRecordsByFilter(
     "clients",
     "email = {:email} && businessId = {:bid}",
-    { "email": email, "bid": businessId }
-  )
+    "",
+    0, 0,
+    { email: email, bid: businessId }
+  );
 
   if (clientsWithEmailInBusiness.length > 0) {
     throw new BadRequestError("A client with this email already exists for this business!");
