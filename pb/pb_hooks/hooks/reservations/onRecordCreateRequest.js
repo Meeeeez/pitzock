@@ -17,6 +17,7 @@ onRecordCreateRequest((e) => {
     // 3. check if business is active
     if (!business.getBool("isActive")) throw new BadRequestError("Business is inactive")
 
+
     // 4. check if business is on holiday
     const businessId = business.getString("id")
     const overlapsWithHoliday = utils.isReservationOverlappingWithBusinessHoliday(businessId, e.record)
@@ -26,6 +27,17 @@ onRecordCreateRequest((e) => {
     const businessOpeningHours = JSON.parse(business.getString("openingHours"))
     const isWithinOpeningHours = utils.isReservationWithinOpeningHours(businessOpeningHours, e.record)
     if (!isWithinOpeningHours) throw new BadRequestError("Business is closed")
+
+    // 5. check if timeslot matches exactly the timeslots offered by the business 
+    const step = business.getInt("timeSlotSizeMin")
+    const dayOfWeek = startsAt.getDay()
+    const todaySlots = businessOpeningHours[dayOfWeek] || []
+    const validTicks = utils.flattenOpeningHours(todaySlots, step)
+    const requestedMinsEnd = endsAt.getHours() * 60 + endsAt.getMinutes()
+    const requestedMinsStart = startsAt.getHours() * 60 + startsAt.getMinutes()
+    if (!validTicks.includes(requestedMinsEnd) || !validTicks.includes(requestedMinsStart)) {
+      throw new BadRequestError(`Invalid time slot. This business only accepts reservations in ${step}-minute intervals.`)
+    }
 
     e.next()
   } catch (err) {

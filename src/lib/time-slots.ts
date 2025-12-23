@@ -1,7 +1,5 @@
 import type { TTimeSlot } from "@/lib/types/business";
-import type { TReservation, TReservationWithClientTimesInMinFromMidnight } from "./types/reservation";
-
-export const SLOT_MINUTES = 15;
+import type { TReservation } from "./types/reservation";
 
 /** "HH:mm" → minutes since midnight */
 export function timeToMinutes(time: string): number {
@@ -19,14 +17,14 @@ export function minutesToTime(minutes: number): string {
 /** Expand opening-hour intervals into discrete slots */
 export function expandOpeningHours(
   slots: TTimeSlot[],
-  stepMinutes = SLOT_MINUTES
+  timeSlotMins: number
 ): number[] {
   return slots.flatMap(({ start, end }) => {
     const startMin = timeToMinutes(start);
     const endMin = timeToMinutes(end);
 
     const result: number[] = [];
-    for (let t = startMin; t < endMin; t += stepMinutes) {
+    for (let t = startMin; t < endMin; t += timeSlotMins) {
       result.push(t);
     }
     return result;
@@ -37,9 +35,9 @@ export function expandOpeningHours(
  * flattens all slots into a simple array of "minutes from midnight"
  * e.g. "09:00" becomes 540
  * @param {TTimeSlot[]} openingHours the opening hours at that date
- * @returns an array of numbers, each representing the minutes passed since midnight in SLOT_MINUTES steps
+ * @returns an array of numbers, each representing the minutes passed since midnight in timeSlotMins steps
  */
-export function flattenOpeningHours(openingHours: TTimeSlot[]): number[] {
+export function flattenOpeningHours(openingHours: TTimeSlot[], timeSlotMins: number): number[] {
   const allTickMinutes: number[] = [];
   openingHours.forEach((slot) => {
     const [startH, startM] = slot.start.split(":").map(Number);
@@ -50,7 +48,7 @@ export function flattenOpeningHours(openingHours: TTimeSlot[]): number[] {
 
     while (current < end) {
       allTickMinutes.push(current);
-      current += SLOT_MINUTES;
+      current += timeSlotMins;
     }
   });
   return allTickMinutes;

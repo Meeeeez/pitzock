@@ -46,7 +46,7 @@ function isReservationOverlappingWithBusinessHoliday(businessId, reservation) {
 
 /**
  * Checks if a reservation is fully within business opening hours, supporting multi-day spans and overnight shifts.
- * * @param {Array} openingHours Array of 7 entries (0=Mon, 6=Sun), each with {start, end}.
+ * @param {Array} openingHours Array of 7 entries (0=Mon, 6=Sun), each with {start, end}.
  * @param {Record} reservation The reservation record with startsAt/endsAt.
  * @returns {boolean} True if the reservation is fully covered by open intervals.
  */
@@ -90,9 +90,33 @@ function isReservationWithinOpeningHours(openingHours, reservation) {
   return true;
 }
 
+/**
+ * flattens all slots into a simple array of "minutes from midnight"
+ * e.g. "09:00" becomes 540
+* @param {Array} openingHours Array of 7 entries (0=Mon, 6=Sun), each with {start, end}.
+* @returns an array of numbers, each representing the minutes passed since midnight in timeSlotMins steps
+ */
+function flattenOpeningHours(openingHours, timeSlotMins) {
+  const allTickMinutes = [];
+  openingHours.forEach((slot) => {
+    const [startH, startM] = slot.start.split(":").map(Number);
+    const [endH, endM] = slot.end.split(":").map(Number);
+
+    let current = startH * 60 + startM;
+    const end = endH * 60 + endM;
+
+    while (current < end) {
+      allTickMinutes.push(current);
+      current += timeSlotMins;
+    }
+  });
+  return allTickMinutes;
+}
+
 module.exports = {
   getBusinessById,
+  flattenOpeningHours,
   getBusinessByClientId,
+  isReservationWithinOpeningHours,
   isReservationOverlappingWithBusinessHoliday,
-  isReservationWithinOpeningHours
 }

@@ -70,7 +70,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
 
   return (
     <Table>
-      <TimelineHeader openingHours={openingHoursAtSelectedDate} />
+      <TimelineHeader timeSlotSizeMin={business.timeSlotSizeMin} openingHours={openingHoursAtSelectedDate} />
       <TableBody>
         {areas?.map(area => {
           const areaStations = stationsByArea?.[area.id] ?? [];
@@ -82,6 +82,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
                   key={station.id}
                   station={station}
                   areaOfStation={area}
+                  timeSlotSizeMin={business.timeSlotSizeMin}
                   openingHours={openingHoursAtSelectedDate}
                   reservations={reservationsAtDateByStations?.get(station.id) ?? []}
                 />

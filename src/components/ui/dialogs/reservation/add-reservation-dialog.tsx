@@ -15,11 +15,14 @@ import { useCreateReservation } from "@/hooks/reservation/use-create-reservation
 import { useQueryClient } from "@tanstack/react-query";
 import type { TClient } from "@/lib/types/client";
 import { ClientResponseError } from "pocketbase";
+import { TimeSelect } from "../../time-select";
+import { useGetBusiness } from "@/hooks/business/use-get-business";
 
 export function AddReservationDialog() {
   const queryClient = useQueryClient();
   const createClientMutation = useCreateClient();
   const createReservationMutation = useCreateReservation();
+  const { data: business } = useGetBusiness();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>();
   const [name, setName] = useState("");
@@ -165,24 +168,15 @@ export function AddReservationDialog() {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <Input
-                  name="time"
-                  type="time"
-                  id="time-picker"
-                  step="60"
-                  className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  value={startDateTime ? startDateTime.toTimeString().slice(0, 5) : ""}
-                  onChange={(e) => {
+                <TimeSelect
+                  step={2}
+                  openingHours={business?.openingHours[startDateTime?.getDay() ?? 0]}
+                  onSelect={(value) => {
                     if (!startDateTime) return;
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
+                    const [hours, minutes] = value.split(":").map(Number);
                     const updatedDateTime = new Date(startDateTime);
-                    updatedDateTime.setHours(hours);
-                    updatedDateTime.setMinutes(minutes);
-                    updatedDateTime.setSeconds(0);
+                    updatedDateTime.setHours(hours, minutes, 0, 0);
                     setStartDateTime(updatedDateTime);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Backspace") e.preventDefault();
                   }}
                 />
               </div>
@@ -224,24 +218,15 @@ export function AddReservationDialog() {
                     </PopoverContent>
                   </Popover>
                 </div>
-                <Input
-                  name="time"
-                  type="time"
-                  id="time-picker"
-                  step="60"
-                  className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  value={endDateTime ? endDateTime.toTimeString().slice(0, 5) : ""}
-                  onChange={(e) => {
-                    if (!endDateTime) return;
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    const updatedDateTime = new Date(endDateTime);
-                    updatedDateTime.setHours(hours);
-                    updatedDateTime.setMinutes(minutes);
-                    updatedDateTime.setSeconds(0);
-                    setEndDateTime(updatedDateTime);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Backspace") e.preventDefault();
+                <TimeSelect
+                  step={business?.timeSlotSizeMin}
+                  openingHours={business?.openingHours[endDateTime?.getDay() ?? 0]}
+                  defaultValue={endDateTime ? endDateTime.toTimeString().slice(0, 5) : ""}
+                  onSelect={(value) => {
+                    const [h, m] = value.split(":").map(Number);
+                    const updated = new Date(endDateTime || new Date());
+                    updated.setHours(h, m, 0, 0);
+                    setEndDateTime(updated);
                   }}
                 />
               </div>

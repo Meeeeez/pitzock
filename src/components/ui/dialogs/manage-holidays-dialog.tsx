@@ -3,7 +3,6 @@ import { ChevronDownIcon, PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../dialog";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Label } from "../label";
-import { Input } from "../input";
 import { Spinner } from "../spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Calendar } from "../calendar";
@@ -12,6 +11,8 @@ import { useCreateHolidays } from "@/hooks/holidays/use-create-holidays";
 import { useEditHolidays } from "@/hooks/holidays/use-edit-holidays";
 import { useDeleteHolidays } from "@/hooks/holidays/use-delete-holidays";
 import type { THoliday } from "@/lib/types/holiday";
+import { TimeSelect } from "../time-select";
+import { useGetBusiness } from "@/hooks/business/use-get-business";
 
 interface ManageHolidaysDialogProps {
   mode: "ADD" | "EDIT" | "DELETE";
@@ -27,6 +28,7 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
   const [toDateTimeSelectOpen, setToDateTimeSelectOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const { data: business } = useGetBusiness();
   const createHolidaysMutation = useCreateHolidays();
   const editHolidaysMutation = useEditHolidays();
   const deleteHolidaysMutation = useDeleteHolidays();
@@ -135,24 +137,16 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
                   </PopoverContent>
                 </Popover>
               </div>
-              <Input
-                name="time"
-                type="time"
-                id="time-picker"
-                step="60"
-                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                value={fromDateTime ? fromDateTime.toTimeString().slice(0, 5) : ""}
-                onChange={(e) => {
+              <TimeSelect
+                step={business?.timeSlotSizeMin}
+                openingHours={business?.openingHours[fromDateTime?.getDay() ?? 0]}
+                defaultValue={fromDateTime ? fromDateTime.toTimeString().slice(0, 5) : ""}
+                onSelect={(value) => {
                   if (!fromDateTime) return;
-                  const [hours, minutes] = e.target.value.split(":").map(Number);
+                  const [hours, minutes] = value.split(":").map(Number);
                   const updatedDateTime = new Date(fromDateTime);
-                  updatedDateTime.setHours(hours);
-                  updatedDateTime.setMinutes(minutes);
-                  updatedDateTime.setSeconds(0);
+                  updatedDateTime.setHours(hours, minutes, 0, 0);
                   setFromDateTime(updatedDateTime);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Backspace") e.preventDefault();
                 }}
               />
             </div>
@@ -194,24 +188,15 @@ export function ManageHolidaysDialog({ mode, editData, children }: ManageHoliday
                   </PopoverContent>
                 </Popover>
               </div>
-              <Input
-                name="time"
-                type="time"
-                id="time-picker"
-                step="60"
-                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                value={toDateTime ? toDateTime.toTimeString().slice(0, 5) : ""}
-                onChange={(e) => {
+              <TimeSelect
+                step={business?.timeSlotSizeMin}
+                defaultValue={toDateTime ? toDateTime.toTimeString().slice(0, 5) : ""}
+                onSelect={(value) => {
                   if (!toDateTime) return;
-                  const [hours, minutes] = e.target.value.split(":").map(Number);
+                  const [hours, minutes] = value.split(":").map(Number);
                   const updatedDateTime = new Date(toDateTime);
-                  updatedDateTime.setHours(hours);
-                  updatedDateTime.setMinutes(minutes);
-                  updatedDateTime.setSeconds(0);
+                  updatedDateTime.setHours(hours, minutes, 0, 0);
                   setToDateTime(updatedDateTime);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Backspace") e.preventDefault();
                 }}
               />
             </div>

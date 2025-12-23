@@ -7,18 +7,19 @@ import type { TTimeSlot } from "@/lib/types/business";
 import { TableRow, TableCell } from "@/components/ui/table";
 import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation";
 import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
-import { flattenOpeningHours, flattenReservations, SLOT_MINUTES } from "@/lib/time-slots";
+import { flattenOpeningHours, flattenReservations } from "@/lib/time-slots";
 
 interface StationRowProps {
   station: TStation;
   props?: ComponentProps<typeof TableCell>;
   reservations: TReservationWithClientAndSeatedAt[];
   areaOfStation: TArea;
+  timeSlotSizeMin: number;
   openingHours: TTimeSlot[];
 }
 
-export function StationRow({ station, reservations, areaOfStation, openingHours }: StationRowProps) {
-  const ohTicksInMinFromMidnight = flattenOpeningHours(openingHours);
+export function StationRow({ station, timeSlotSizeMin, reservations, areaOfStation, openingHours }: StationRowProps) {
+  const ohTicksInMinFromMidnight = flattenOpeningHours(openingHours, timeSlotSizeMin);
   const resTimesInMinFromMidnight = flattenReservations(reservations);
   let skipCount = 0;
 
@@ -50,7 +51,7 @@ export function StationRow({ station, reservations, areaOfStation, openingHours 
         const endMins = resTimes?.endMins;
         if (startMins && endMins && res) {
           const duration = endMins - startMins;
-          const colSpan = Math.round(duration / SLOT_MINUTES);
+          const colSpan = Math.round(duration / timeSlotSizeMin);
           // Important: We skip the NEXT (colSpan - 1) cells
           skipCount = colSpan - 1;
           return (

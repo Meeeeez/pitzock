@@ -5,6 +5,9 @@ export type TBusiness = {
   openingHours: TOpeningHours,
   isActive: boolean,
   defaultReservationDurationMinutes: number,
+  timeSlotSizeMin: number,
+  maxAdvanceBookingDays: number,
+  maxPax: number,
   created: string,
   updated: string
 }
