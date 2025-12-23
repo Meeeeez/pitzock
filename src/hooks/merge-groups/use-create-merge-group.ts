@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import pb from '@/lib/pocketbase';
-import type { TMergeGroup } from "@/lib/types/mergeGroup";
 
 interface CreateMergeGroupInput {
   areaId: string;
