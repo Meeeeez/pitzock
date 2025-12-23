@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import pb from '@/lib/pocketbase';
-import type { TMergeGroupDb } from "@/lib/types/mergeGroup";
+import type { TMergeGroup } from "@/lib/types/mergeGroup";
 
 interface CreateMergeGroupInput {
   areaId: string;
@@ -14,10 +14,10 @@ export const useCreateMergeGroup = () => {
 
   return useMutation({
     mutationFn: async (data: CreateMergeGroupInput) => {
-      let mergeGroup: TMergeGroupDb | null = null;
+      let mergeGroup: TMergeGroup | null = null;
       try {
         // 1 Create the mergeGroup
-        mergeGroup = await pb.collection('mergeGroups').create<TMergeGroupDb>({
+        mergeGroup = await pb.collection('mergeGroups').create<TMergeGroup>({
           areaId: data.areaId,
           capacity: data.capacity,
         });

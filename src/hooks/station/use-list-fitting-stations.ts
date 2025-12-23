@@ -4,6 +4,7 @@ import type { TReservation } from '@/lib/types/reservation';
 import type { TStation } from '@/lib/types/station';
 
 export type TFittingOption = {
+  id?: string; // only on type === 'merge'
   capacity: number;
   type: 'single' | 'merge';
   members: TStation[];

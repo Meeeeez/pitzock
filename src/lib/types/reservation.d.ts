@@ -1,4 +1,6 @@
 import type { TClient } from "./client"
+import type { TMergeGroupMember, TMergeGroupWithMembers } from "./mergeGroup"
+import type { TStation } from "./station"
 
 export type TReservation = {
   id: string
@@ -14,8 +16,9 @@ export type TReservation = {
   updated: string
 }
 
-export type TReservationWithClient = TReservation & {
+export type TReservationWithClientAndSeatedAt = TReservation & {
   client: TClient;
+  seatedAt: TStation | TMergeGroupWithMembers;
 };
 
 export type TReservationStatus = "BOOKED" | "CONFIRMED" | "CANCELLED" | "ARRIVED" | "NOSHOW"

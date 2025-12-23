@@ -1,10 +1,7 @@
 export type TMergeGroup = {
   id: string
-  areaId: string
   capacity: number
-  members: TMergeGroupMember[]
-  created: string
-  updated: string
+  areaId: string
 }
 
 export type TMergeGroupMember = {
@@ -12,8 +9,6 @@ export type TMergeGroupMember = {
   name: string;
 }
 
-export type TMergeGroupDb = {
-  id: string
-  capacity: number
-  areaId: string
+export type TMergeGroupWithMembers = TMergeGroup & {
+  members: TMergeGroupMember[]
 }

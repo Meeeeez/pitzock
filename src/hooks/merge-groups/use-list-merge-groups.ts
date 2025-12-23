@@ -1,5 +1,5 @@
 import pb from '@/lib/pocketbase';
-import type { TMergeGroup } from '@/lib/types/mergeGroup';
+import type { TMergeGroupWithMembers } from '@/lib/types/mergeGroup';
 import { useQuery } from '@tanstack/react-query';
 
 export function useListMergeGroups() {
@@ -37,7 +37,7 @@ export function useListMergeGroups() {
         groupsMap.get(group.id).members.push({ id: row.stationId, name: station.name });
       }
 
-      return Array.from(groupsMap.values()) as TMergeGroup[];
+      return Array.from(groupsMap.values()) as TMergeGroupWithMembers[];
     },
   });
 }

@@ -5,14 +5,14 @@ import { ReservationSpan } from "./ReservationSpan";
 import type { TStation } from "@/lib/types/station";
 import type { TTimeSlot } from "@/lib/types/business";
 import { TableRow, TableCell } from "@/components/ui/table";
-import type { TReservationWithClient } from "@/lib/types/reservation";
+import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation";
 import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
 import { flattenOpeningHours, flattenReservations, SLOT_MINUTES } from "@/lib/time-slots";
 
 interface StationRowProps {
   station: TStation;
   props?: ComponentProps<typeof TableCell>;
-  reservations: TReservationWithClient[];
+  reservations: TReservationWithClientAndSeatedAt[];
   areaOfStation: TArea;
   openingHours: TTimeSlot[];
 }

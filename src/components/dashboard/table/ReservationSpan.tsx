@@ -1,13 +1,13 @@
 import { EditReservationDialog } from "@/components/ui/dialogs/reservation/edit-reservation-dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { TReservationWithClient } from "@/lib/types/reservation";
+import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation";
 import type { TStation } from "@/lib/types/station";
 import { PawPrintIcon, PencilLineIcon, UsersIcon } from "lucide-react";
 import type { HTMLAttributes } from "react";
 
 interface ReservationSpanProps {
   station: TStation;
-  reservation: TReservationWithClient;
+  reservation: TReservationWithClientAndSeatedAt;
   className?: HTMLAttributes<HTMLDivElement>['className'];
 }
 

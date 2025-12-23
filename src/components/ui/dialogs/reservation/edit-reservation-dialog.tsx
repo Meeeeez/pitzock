@@ -1,17 +1,17 @@
-import type { TReservationWithClient } from "@/lib/types/reservation"
+import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation"
 import { useState, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../dialog";
-import { Clock, Users, Mail, MessageSquare, PawPrintIcon, LayoutGrid, PencilIcon } from "lucide-react";
+import { Clock, Users, Mail, MessageSquare, PawPrintIcon, LayoutGrid } from "lucide-react";
 import type { TStation } from "@/lib/types/station";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../select"; // Assuming Shadcn Select
 import { useListFittingStations } from "@/hooks/station/use-list-fitting-stations";
 import { Spinner } from "../../spinner";
-import { Button } from "../../button";
+import { useEditStationReservationAssignment } from "@/hooks/reservation/use-edit-station-reservation-assignment";
 
 interface EditReservationDialogProps {
   children: ReactNode;
   station: TStation;
-  reservation: TReservationWithClient;
+  reservation: TReservationWithClientAndSeatedAt;
 }
 
 export function EditReservationDialog({ reservation, children, station }: EditReservationDialogProps) {
@@ -19,13 +19,25 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
   const resStart = new Date(reservation.startsAt)
   const resEnd = new Date(reservation.endsAt)
   const [dialogOpen, setDialogOpen] = useState(false);
-  const dateToTime = (d: Date) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const { data: fittingOptions, isPending } = useListFittingStations(reservation, dialogOpen);
   const [singles, merges] = fittingOptions ?? [[], []];
-  const [editMode, setEditMode] = useState(false);
+  const editStationReservationMutation = useEditStationReservationAssignment();
 
-  const saveNewStationAssignment = () => {
-    console.log("TODO: save new reservation assignment. stationreservation onupdate! maybe just delete the old ones and assign the new ones if they work else rollback")
+  const dateToTime = (d: Date) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const saveNewStationAssignment = (newVal: string) => {
+    // if value is of type gid:xxx it is a merge group.
+    if (newVal.includes(":")) {
+      editStationReservationMutation.mutate(
+        { reservationId: reservation.id, mergeGroupId: newVal.split(":")[1] },
+        { onSuccess: () => setDialogOpen(false) }
+      );
+    } else {
+      editStationReservationMutation.mutate(
+        { reservationId: reservation.id, stationId: newVal },
+        { onSuccess: () => setDialogOpen(false) }
+      );
+    }
   }
 
   return (
@@ -86,29 +98,33 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
             </div>
           )}
           <div className="space-y-3 pb-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                <LayoutGrid className="h-4 w-4" /> Station Assignment
-              </p>
-              <Button variant={"outline"} size={"icon"} onClick={() => setEditMode(true)}>
-                <PencilIcon />
-              </Button>
-            </div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <LayoutGrid className="h-4 w-4" /> Station Assignment
+            </p>
             {isPending ? (
               <div className="flex justify-center w-full">
                 <Spinner />
               </div>
             ) : (
-              <Select defaultValue={station.id} disabled={!editMode} onValueChange={saveNewStationAssignment}>
+              <Select defaultValue={'members' in reservation.seatedAt ? "gId:" + reservation.seatedAt.id : station.id} onValueChange={saveNewStationAssignment}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a station" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    {/* Always display current */}
-                    <SelectItem value={station.id}>
-                      {station.name} <span className="text-muted-foreground">(Current)</span>
-                    </SelectItem>
+                    {/* Always display current - either a single station or a group */}
+                    {('members' in reservation.seatedAt) ? (
+                      <SelectItem value={"gId:" + reservation.seatedAt.id}>
+                        <div className="flex gap-2">
+                          <span>{reservation.seatedAt.members.map(m => m.name).join(' & ')}</span>
+                          <span className="text-muted-foreground">(Pax: {reservation.seatedAt.capacity})</span>
+                        </div>
+                      </SelectItem>
+                    ) : (
+                      <SelectItem value={station.id}>
+                        {station.name} <span className="text-muted-foreground">(Current)</span>
+                      </SelectItem>
+                    )}
                     {singles.length === 0 && merges.length === 0 &&
                       <SelectLabel className="flex justify-center w-full uppercase text-muted-foreground tracking-wider">No other Stations fit this Reservation</SelectLabel>
                     }
@@ -120,9 +136,9 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
                       <SelectLabel className="uppercase text-muted-foreground tracking-wider">Individual Stations</SelectLabel>
                       {singles.map((opt, idx) => (
                         <SelectItem key={`s-${idx}`} value={opt.members[0].id}>
-                          <div className="flex justify-between w-full min-w-[180px]">
+                          <div className="flex gap-2">
                             <span>{opt.members[0].name}</span>
-                            <span className="text-muted-foreground opacity-70">Pax: {opt.capacity}</span>
+                            <span className="text-muted-foreground">(Pax: {opt.capacity})</span>
                           </div>
                         </SelectItem>
                       ))}
@@ -134,7 +150,7 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
                     <SelectGroup>
                       <SelectLabel className="uppercase text-muted-foreground tracking-wider">Station Groups</SelectLabel>
                       {merges.map((opt, idx) => (
-                        <SelectItem key={`m-${idx}`} value={opt.members.map(m => m.id).join(',')}>
+                        <SelectItem key={`m-${idx}`} value={"gId:" + opt.id}>
                           <div className="flex gap-2">
                             <span>{opt.members.map(m => m.name).join(' & ')}</span>
                             <span className="text-muted-foreground">(Pax: {opt.capacity})</span>

@@ -19,12 +19,12 @@ import { PencilIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../select";
 import { useDeleteMergeGroup } from "@/hooks/merge-groups/use-delete-merge-group";
 import { useCreateMergeGroup } from "@/hooks/merge-groups/use-create-merge-group";
-import type { TMergeGroup } from "@/lib/types/mergeGroup";
+import type { TMergeGroupWithMembers } from "@/lib/types/mergeGroup";
 import { useEditMergeGroup } from "@/hooks/merge-groups/use-edit-merge-group";
 
 interface ManageStationDialogProps {
   mode: 'EDIT' | 'ADD';
-  editData?: TMergeGroup,
+  editData?: TMergeGroupWithMembers,
   children: ReactNode;
 }
 
