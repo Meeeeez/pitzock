@@ -22,3 +22,9 @@ routerAdd("POST", "/api/reassign-station-reservation", reassignStationReservatio
 
 const createMergeGroup = require(`${__hooks}/custom-api-routes/create-merge-group.js`);
 routerAdd("POST", "/api/create-merge-group", createMergeGroup, $apis.requireAuth());
+
+const createWalkIn = require(`${__hooks}/custom-api-routes/create-walk-in.js`);
+routerAdd("POST", "/api/create-walk-in", createWalkIn, $apis.requireAuth());
+
+const reassignStationWalkInHandler = require(`${__hooks}/custom-api-routes/reassign-station-walk-in.js`);
+routerAdd("POST", "/api/reassign-station-walk-in", reassignStationWalkInHandler, $apis.requireAuth());

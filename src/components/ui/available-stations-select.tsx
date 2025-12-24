@@ -30,7 +30,8 @@ export function AvailableStationSelect({
     bringsPets,
     startsAt,
     endsAt,
-    enabled
+    enabled,
+    currentStation
   );
   const [singles, merges] = fittingOptions ?? [[], []];
 
@@ -46,24 +47,6 @@ export function AvailableStationSelect({
         <SelectValue placeholder="Select a station" />
       </SelectTrigger>
       <SelectContent>
-        {currentStation && (
-          <SelectGroup>
-            {/* Always display current - either a single station or a group */}
-            {('members' in currentStation) ? (
-              <SelectItem value={"gId:" + currentStation.id}>
-                <div className="flex gap-2">
-                  <span>{currentStation.members.map(m => m.name).join(' & ')}</span>
-                  <span className="text-muted-foreground">(Pax: {currentStation.capacity})</span>
-                </div>
-              </SelectItem>
-            ) : (
-              <SelectItem value={currentStation.id}>
-                {currentStation.name} <span className="text-muted-foreground">(Current)</span>
-              </SelectItem>
-            )}
-          </SelectGroup>
-        )}
-
         {/* Singles Section */}
         {singles.length > 0 && (
           <SelectGroup>

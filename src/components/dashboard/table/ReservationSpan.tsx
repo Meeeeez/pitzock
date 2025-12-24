@@ -2,7 +2,7 @@ import { EditReservationDialog } from "@/components/ui/dialogs/reservation/edit-
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation";
 import type { TStation } from "@/lib/types/station";
-import { PawPrintIcon, PencilLineIcon, UsersIcon } from "lucide-react";
+import { PawPrintIcon, PencilLineIcon, UsersIcon, } from "lucide-react";
 import type { HTMLAttributes } from "react";
 
 interface ReservationSpanProps {
@@ -22,9 +22,7 @@ export function ReservationSpan({ reservation, station, className }: Reservation
               <TooltipTrigger asChild>
                 <PencilLineIcon className="h-3 w-3 mt-0.5" />
               </TooltipTrigger>
-              <TooltipContent>
-                Client left a Note
-              </TooltipContent>
+              <TooltipContent>Client left a Note</TooltipContent>
             </Tooltip>
           )}
           {reservation.bringsPets && (
@@ -32,9 +30,7 @@ export function ReservationSpan({ reservation, station, className }: Reservation
               <TooltipTrigger asChild>
                 <PawPrintIcon className="h-3 w-3 mt-0.5" />
               </TooltipTrigger>
-              <TooltipContent>
-                Client brings Pets
-              </TooltipContent>
+              <TooltipContent>Client brings Pets</TooltipContent>
             </Tooltip>
           )}
           <Tooltip>
@@ -44,12 +40,10 @@ export function ReservationSpan({ reservation, station, className }: Reservation
                 <div className="text-xs font-semibold">{reservation.pax}</div>
               </div>
             </TooltipTrigger>
-            <TooltipContent>
-              {reservation.pax} People coming
-            </TooltipContent>
+            <TooltipContent>{reservation.pax} People coming</TooltipContent>
           </Tooltip>
         </div>
       </div>
     </EditReservationDialog>
-  )
+  );
 }

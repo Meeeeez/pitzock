@@ -1,9 +1,10 @@
 import type { TTimeSlot } from "@/lib/types/business";
 import type { TReservation } from "./types/reservation";
+import type { TWalkIn } from "./types/walk-in";
 
 /** "HH:mm" → minutes since midnight */
-export function timeToMinutes(time: string): number {
-  const [h, m] = time.split(":").map(Number);
+export function timeToMinutes(time?: string): number {
+  const [h, m] = time?.split(":").map(Number) ?? [];
   return h * 60 + m;
 }
 
@@ -40,8 +41,8 @@ export function expandOpeningHours(
 export function flattenOpeningHours(openingHours: TTimeSlot[], timeSlotMins: number): number[] {
   const allTickMinutes: number[] = [];
   openingHours.forEach((slot) => {
-    const [startH, startM] = slot.start.split(":").map(Number);
-    const [endH, endM] = slot.end.split(":").map(Number);
+    const [endH, endM] = slot.end?.split(":").map(Number) ?? [];
+    const [startH, startM] = slot.start?.split(":").map(Number) ?? [];
 
     let current = startH * 60 + startM;
     const end = endH * 60 + endM;
@@ -59,8 +60,8 @@ export function flattenOpeningHours(openingHours: TTimeSlot[], timeSlotMins: num
  * @param {TReservation[]} reservations all reservations at this date for a certain station
  * @returns 
  */
-export function flattenReservations(reservations: TReservation[]) {
-  return reservations?.map((res: TReservation) => {
+export function flattenBooking(booking: TReservation[] | TWalkIn[]) {
+  return booking?.map((res: TReservation | TWalkIn) => {
     const d = new Date(res.startsAt);
     const e = new Date(res.endsAt);
     return {

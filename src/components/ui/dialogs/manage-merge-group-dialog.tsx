@@ -99,7 +99,7 @@ export function ManageMergeGroupDialog({ mode, editData, children }: ManageStati
         <DialogHeader>
           {mode === "ADD" ? (
             <>
-              <DialogTitle>Add a new mergable Station Group</DialogTitle>
+              <DialogTitle>Add a new Station Group</DialogTitle>
               <DialogDescription>
                 TODO
               </DialogDescription>

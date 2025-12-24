@@ -1,11 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table"
 import { Spinner } from "./spinner";
-import { EmptyStations } from "./empty/empty-stations";
 import { useListMergeGroups } from "@/hooks/merge-groups/use-list-merge-groups";
 import { Badge } from "./badge";
 import { ManageMergeGroupDialog } from "./dialogs/manage-merge-group-dialog";
 import { Button } from "./button";
 import { PencilIcon } from "lucide-react";
+import { EmptyStationGroups } from "./empty/empty-station-groups";
 
 export function MergeGroupsTable() {
   const { data: mergeGroups, isPending } = useListMergeGroups();
@@ -20,7 +20,7 @@ export function MergeGroupsTable() {
   }
 
   if (!mergeGroups || mergeGroups?.length === 0) {
-    return <EmptyStations />
+    return <EmptyStationGroups />
   }
 
   return (

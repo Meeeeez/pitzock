@@ -23,13 +23,20 @@ function getSuitableAreas(bringsPets, businessId) {
  */
 function getBusyStationsIds(start, end) {
   $app.logger().info("BUSY_STATIONS_CHECK", "start", start, "end", end)
-  const ids = $app.findRecordsByFilter(
+  const stationsOccupiedByReservations = $app.findRecordsByFilter(
     "stationReservations",
     "reservationId.startsAt < {:end} && reservationId.endsAt > {:start}",
     "", 0, 0, { start, end }
-  ).map(r => r.getString("stationId"));
-  $app.logger().info("BUSY_STATIONS_RESULT", ids)
-  return new Set(ids);
+  );
+  const stationsOccupiedByWalkIns = $app.findRecordsByFilter(
+    "stationWalkIns",
+    "walkInId.startsAt < {:end} && walkInId.endsAt > {:start}",
+    "", 0, 0, { start, end }
+  );
+  const busyIds = stationsOccupiedByReservations.concat(stationsOccupiedByWalkIns).map(r => r.getString("stationId"));
+  const busyIdsSet = new Set(busyIds);
+  $app.logger().info("BUSY_STATIONS_RESULT", Array.from(busyIdsSet));
+  return busyIdsSet;
 }
 
 /**

@@ -24,7 +24,7 @@ export const useEditStationReservationAssignment = () => {
     onSuccess: () => {
       toast.success("Reservation updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["reservations"] });
-      queryClient.invalidateQueries({ queryKey: ["stationsFittingReservation"] });
+      queryClient.invalidateQueries({ queryKey: ["fittingStations"] });
     },
     onError: (e) => {
       toast.error("Error updating reservation: " + e.message);

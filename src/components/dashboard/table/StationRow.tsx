@@ -7,21 +7,25 @@ import type { TTimeSlot } from "@/lib/types/business";
 import { TableRow, TableCell } from "@/components/ui/table";
 import type { TReservationWithClientAndSeatedAt } from "@/lib/types/reservation";
 import { ManageStationDialog } from "@/components/ui/dialogs/manage-station-dialog";
-import { flattenOpeningHours, flattenReservations } from "@/lib/time-slots";
+import { flattenOpeningHours, flattenBooking } from "@/lib/time-slots";
+import { WalkInSpan } from "./WalkInSpan";
+import type { TWalkInWithSeatedAt } from "@/lib/types/walk-in";
 
 interface StationRowProps {
   station: TStation;
-  props?: ComponentProps<typeof TableCell>;
   reservations: TReservationWithClientAndSeatedAt[];
+  walkIns: TWalkInWithSeatedAt[];
   areaOfStation: TArea;
   timeSlotSizeMin: number;
   openingHours: TTimeSlot[];
+  props?: ComponentProps<typeof TableCell>;
 }
 
-export function StationRow({ station, timeSlotSizeMin, reservations, areaOfStation, openingHours }: StationRowProps) {
-  const ohTicksInMinFromMidnight = flattenOpeningHours(openingHours, timeSlotSizeMin);
-  const resTimesInMinFromMidnight = flattenReservations(reservations);
+export function StationRow({ station, timeSlotSizeMin, reservations, walkIns, areaOfStation, openingHours }: StationRowProps) {
   let skipCount = 0;
+  const walkInTimes = flattenBooking(walkIns) || [];
+  const resTimes = flattenBooking(reservations) || [];
+  const ohTicksInMinFromMidnight = flattenOpeningHours(openingHours, timeSlotSizeMin);
 
   return (
     <TableRow className="border-l border-border">
@@ -38,36 +42,47 @@ export function StationRow({ station, timeSlotSizeMin, reservations, areaOfStati
       </ManageStationDialog>
 
       {ohTicksInMinFromMidnight.map((tickMins) => {
-        // If we are currently spanning a reservation, skip this iteration
         if (skipCount > 0) {
           skipCount--;
           return null;
         }
 
-        // Find reservation starting at this exact time slot
-        const resTimes = resTimesInMinFromMidnight?.find((r) => r.startMins === tickMins);
-        const res = reservations.find((r) => r.id === resTimes?.id)
-        const startMins = resTimes?.startMins;
-        const endMins = resTimes?.endMins;
-        if (startMins && endMins && res) {
-          const duration = endMins - startMins;
-          const colSpan = Math.round(duration / timeSlotSizeMin);
-          // Important: We skip the NEXT (colSpan - 1) cells
-          skipCount = colSpan - 1;
-          return (
-            <TableCell key={`${station.id}-${tickMins}`} colSpan={colSpan} className="p-0 border-none h-12">
-              <ReservationSpan station={station} reservation={res} />
-            </TableCell>
-          );
-        } else {
-          // Empty Cell
-          return (
-            <TableCell
-              key={`${station.id}-${tickMins}`}
-              className="border-r border-muted/10 min-w-[45px] h-12"
-            />
-          );
+        // Check for Reservation
+        const resMeta = resTimes.find((r) => r.startMins === tickMins);
+        if (resMeta) {
+          const resData = reservations.find((r) => r.id === resMeta.id);
+          if (resData) {
+            const colSpan = Math.round((resMeta.endMins - resMeta.startMins) / timeSlotSizeMin);
+            skipCount = colSpan - 1;
+            return (
+              <TableCell key={`${station.id}-${tickMins}`} colSpan={colSpan} className="p-0 border-none h-12">
+                <ReservationSpan station={station} reservation={resData} />
+              </TableCell>
+            );
+          }
         }
+
+        // Check for Walk-In
+        const walkInMeta = walkInTimes.find((w) => w.startMins === tickMins);
+        if (walkInMeta) {
+          const walkInData = walkIns.find((w) => w.id === walkInMeta.id);
+          if (walkInData) {
+            const colSpan = Math.round((walkInMeta.endMins - walkInMeta.startMins) / timeSlotSizeMin);
+            skipCount = colSpan - 1;
+            return (
+              <TableCell key={`${station.id}-${tickMins}`} colSpan={colSpan} className="p-0 border-none h-12">
+                <WalkInSpan station={station} walkIn={walkInData} />
+              </TableCell>
+            );
+          }
+        }
+
+        return (
+          <TableCell
+            key={`${station.id}-${tickMins}`}
+            className="border-r border-muted/10 min-w-[45px] h-12"
+          />
+        );
       })}
     </TableRow>
   );

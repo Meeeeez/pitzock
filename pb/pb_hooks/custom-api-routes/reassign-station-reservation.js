@@ -4,7 +4,7 @@ function reassignStationReservationHandler(e) {
   try {
     const engine = require(`${__hooks}/lib/engine.js`);
     const data = e.requestInfo().body
-    const businessId = e.auth.id;
+    const businessId = e.auth?.id;
 
     if (!businessId) return e.json(401, { message: "Unauthorized" });
     if (!data.reservationId) return e.json(400, { message: "Missing reservationId" });
@@ -17,7 +17,20 @@ function reassignStationReservationHandler(e) {
     const start = reservation.getDateTime("startsAt");
     const bringsPets = reservation.getBool("bringsPets");
 
-    const busyIds = engine.getBusyStationsIds(start, end, data.reservationId);
+    /**
+     * SELF-CONFLICT AVOIDANCE:
+     * We remove the current station assignments from the 'busyIds' list.
+     * This tells the engine: "If Station X is busy ONLY because this reservation 
+     * is already there, don't count it as a conflict."
+     */
+    const busyIds = engine.getBusyStationsIds(start, end);
+    const currentStations = $app.findRecordsByFilter(
+      "stationReservations",
+      "reservationId = {:rId}",
+      "", 0, 0,
+      { rId: data.reservationId }
+    );
+    currentStations.forEach(r => busyIds.delete(r.getString("stationId")));
 
     // --- SINGLE STATION ---
     if (data.stationId) {
@@ -31,13 +44,11 @@ function reassignStationReservationHandler(e) {
 
       const suitableStations = engine.getSuitableStations(areaId, pax, busyIds);
       if (!suitableStations.some(s => s.id === data.stationId)) {
-        return e.json(400, { message: "This station is either occupied or has insufficient capacity." });
+        return e.json(400, { message: "Station is occupied or has insufficient capacity." });
       }
 
       $app.runInTransaction((txApp) => {
-        const existing = txApp.findRecordsByFilter("stationReservations", "reservationId = {:rId}", "", 0, 0, { rId: data.reservationId });
-        for (let rec of existing) txApp.delete(rec);
-
+        for (let rec of currentStations) txApp.delete(rec);
         const sr = txApp.findCollectionByNameOrId("stationReservations");
         txApp.save(new Record(sr, { reservationId: data.reservationId, stationId: data.stationId }));
       });
@@ -50,15 +61,6 @@ function reassignStationReservationHandler(e) {
       const mergeGroup = $app.findRecordById("mergeGroups", data.mergeGroupId);
       const areaId = mergeGroup.getString("areaId");
 
-      const groupMembers = $app.findRecordsByFilter(
-        "mergeGroupStations",
-        "mergeGroupId = {:mgId}",
-        "",
-        0, 0,
-        { mgId: data.mergeGroupId }
-      );
-      const memberIds = groupMembers.map(m => m.getString("stationId"));
-
       const suitableAreas = engine.getSuitableAreas(bringsPets, businessId);
       if (!suitableAreas.some(a => a.id === areaId)) {
         return e.json(400, { message: "Selected merge group is in an area which is not suitable for this reservation's requirements." });
@@ -66,24 +68,31 @@ function reassignStationReservationHandler(e) {
 
       const suitableMerges = engine.getSuitableMergeGroups(areaId, pax, busyIds);
       if (!suitableMerges.some(m => m.id === data.mergeGroupId)) {
-        return e.json(400, { message: "This station group is no longer available or too small." });
+        return e.json(400, { message: "This group is occupied or has insufficient capacity." });
       }
 
+      const groupMembers = $app.findRecordsByFilter(
+        "mergeGroupStations",
+        "mergeGroupId = {:mgId}",
+        "", 0, 0,
+        { mgId: data.mergeGroupId }
+      );
+
       $app.runInTransaction((txApp) => {
-        const existing = txApp.findRecordsByFilter("stationReservations", "reservationId = {:rId}", "", 0, 0, { rId: data.reservationId });
-        for (let rec of existing) txApp.delete(rec);
-
+        for (let rec of currentStations) txApp.delete(rec);
         const sr = txApp.findCollectionByNameOrId("stationReservations");
-
-        for (let sId of memberIds) {
-          txApp.save(new Record(sr, { reservationId: data.reservationId, stationId: sId }));
+        for (let m of groupMembers) {
+          txApp.save(new Record(sr, {
+            reservationId: data.reservationId,
+            stationId: m.getString("stationId")
+          }));
         }
       });
       return e.json(200);
     }
   } catch (err) {
-    $app.logger().error("An unexpected Error occured:", err.message);
-    return e.json(500, { message: "Unexpected Error" });
+    $app.logger().error("Reassign Reservation failed:", err.message);
+    return e.json(500, { message: err.message || "Unexpected Error" });
   }
 }
 

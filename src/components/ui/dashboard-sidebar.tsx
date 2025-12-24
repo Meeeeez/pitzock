@@ -1,6 +1,4 @@
-import {
-  Command,
-} from "lucide-react"
+import { Command } from "lucide-react"
 import { NavBusiness } from "@/components/ui/nav-business"
 import {
   Sidebar,
@@ -13,6 +11,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Calendar } from "@/components/ui/calendar"
 import { Separator } from "@/components/ui/separator"
+import { AddWalkInDialog } from "./dialogs/walk-ins/add-walk-in-dialog"
 import { AddReservationDialog } from "./dialogs/reservation/add-reservation-dialog"
 
 const data = {
@@ -61,7 +60,10 @@ export function DashboardSidebar({ date, setDate, props }: DashboardSidebarProps
             required
           />
         </div>
-        <AddReservationDialog />
+        <div className="space-y-2">
+          <AddWalkInDialog />
+          <AddReservationDialog />
+        </div>
       </SidebarContent>
       <Separator />
       <SidebarFooter>

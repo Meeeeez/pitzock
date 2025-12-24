@@ -15,6 +15,7 @@ import { BusinessInactive } from "../ui/empty/business-inactive";
 import { useListHolidays } from "@/hooks/holidays/use-list-holidays";
 import { isDateInHoliday } from "@/lib/utils";
 import { useListReservationsAtDateByStations } from "@/hooks/reservation/use-list-reservations-at-date-by-stations";
+import { useListWalkInsAtDateByStations } from "@/hooks/walk-in/use-list-walk-ins-at-date-by-stations";
 
 interface DashboardReservationTimelineProps {
   selectedDate: Date;
@@ -25,9 +26,11 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
   const { data: business, isPending: businessPending } = useGetBusiness();
   const { data: stations, isPending: stationsPending } = useListStations();
   const { data: holidays, isPending: holidaysPending } = useListHolidays();
+  const { data: walkInsAtDateByStations, isPending: walkInsPending } = useListWalkInsAtDateByStations(selectedDate);
   const { data: reservationsAtDateByStations, isPending: reservationsPending } = useListReservationsAtDateByStations(selectedDate);
   const [openingHoursAtSelectedDate, setOpeningHoursAtSelectedDate] = useState<TTimeSlot[]>([]);
-  const isPending = areasPending || stationsPending || businessPending || holidaysPending || reservationsPending;
+
+  const isPending = areasPending || stationsPending || businessPending || holidaysPending || reservationsPending || walkInsPending;
 
   useEffect(() => {
     if (!business || !business.openingHours) return;
@@ -36,30 +39,15 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
     setOpeningHoursAtSelectedDate(business.openingHours[selectedWeekday]);
   }, [business, selectedDate])
 
-  if (isPending) {
-    return (
-      <div className="flex items-center justify-center w-full h-full">
-        <Spinner />
-      </div>
-    )
-  }
+  if (isPending) return (
+    <div className="flex items-center justify-center w-full h-full">
+      <Spinner />
+    </div>
+  )
 
-  if (!business?.isActive) {
-    return <BusinessInactive />
-  }
-
-  if (isDateInHoliday(selectedDate, holidays)) {
-    return <BusinessClosed type="HOLIDAYS" selectedDate={selectedDate} />;
-  }
-
-  if (openingHoursAtSelectedDate.length === 0) {
-    return <BusinessClosed type="OPENINGHOURS" selectedDate={selectedDate} />;
-  }
-
-  // make kind of a tutorial where users need to setup the app
-  if (areas?.length === 0 || stations?.length === 0) {
-    return "tutorial"
-  }
+  if (!business?.isActive) return <BusinessInactive />
+  if (isDateInHoliday(selectedDate, holidays)) return <BusinessClosed type="HOLIDAYS" selectedDate={selectedDate} />;
+  if (openingHoursAtSelectedDate.length === 0) return <BusinessClosed type="OPENINGHOURS" selectedDate={selectedDate} />;
 
   const stationsByArea = stations?.reduce((acc, station) => {
     const key = station.areaId;
@@ -84,6 +72,7 @@ export default function DashboardReservationTimeline({ selectedDate }: Dashboard
                   areaOfStation={area}
                   timeSlotSizeMin={business.timeSlotSizeMin}
                   openingHours={openingHoursAtSelectedDate}
+                  walkIns={walkInsAtDateByStations?.get(station.id) ?? []}
                   reservations={reservationsAtDateByStations?.get(station.id) ?? []}
                 />
               ))}
