@@ -3,10 +3,8 @@ import { useState, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../dialog";
 import { Clock, Users, Mail, MessageSquare, PawPrintIcon, LayoutGrid } from "lucide-react";
 import type { TStation } from "@/lib/types/station";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../../select"; // Assuming Shadcn Select
-import { useListFittingStations } from "@/hooks/station/use-list-fitting-stations";
-import { Spinner } from "../../spinner";
 import { useEditStationReservationAssignment } from "@/hooks/reservation/use-edit-station-reservation-assignment";
+import { AvailableStationSelect } from "../../available-stations-select";
 
 interface EditReservationDialogProps {
   children: ReactNode;
@@ -19,8 +17,6 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
   const resStart = new Date(reservation.startsAt)
   const resEnd = new Date(reservation.endsAt)
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: fittingOptions, isPending } = useListFittingStations(reservation, dialogOpen);
-  const [singles, merges] = fittingOptions ?? [[], []];
   const editStationReservationMutation = useEditStationReservationAssignment();
 
   const dateToTime = (d: Date) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -68,7 +64,7 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
 
             <div className="flex flex-col gap-1 p-3 rounded-lg border bg-slate-50/50">
               <span className="text-xs text-muted-foreground flex items-center gap-1">
-                <Users className="h-3 w-3" /> Guests
+                <Users className="h-3 w-3" /> Clients
               </span>
               <span className="font-semibold text-base">
                 {reservation.pax}
@@ -101,67 +97,16 @@ export function EditReservationDialog({ reservation, children, station }: EditRe
             <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <LayoutGrid className="h-4 w-4" /> Station Assignment
             </p>
-            {isPending ? (
-              <div className="flex justify-center w-full">
-                <Spinner />
-              </div>
-            ) : (
-              <Select defaultValue={'members' in reservation.seatedAt ? "gId:" + reservation.seatedAt.id : station.id} onValueChange={saveNewStationAssignment}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a station" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {/* Always display current - either a single station or a group */}
-                    {('members' in reservation.seatedAt) ? (
-                      <SelectItem value={"gId:" + reservation.seatedAt.id}>
-                        <div className="flex gap-2">
-                          <span>{reservation.seatedAt.members.map(m => m.name).join(' & ')}</span>
-                          <span className="text-muted-foreground">(Pax: {reservation.seatedAt.capacity})</span>
-                        </div>
-                      </SelectItem>
-                    ) : (
-                      <SelectItem value={station.id}>
-                        {station.name} <span className="text-muted-foreground">(Current)</span>
-                      </SelectItem>
-                    )}
-                    {singles.length === 0 && merges.length === 0 &&
-                      <SelectLabel className="flex justify-center w-full uppercase text-muted-foreground tracking-wider">No other Stations fit this Reservation</SelectLabel>
-                    }
-                  </SelectGroup>
-
-                  {/* Singles Section */}
-                  {singles.length > 0 && (
-                    <SelectGroup>
-                      <SelectLabel className="uppercase text-muted-foreground tracking-wider">Individual Stations</SelectLabel>
-                      {singles.map((opt, idx) => (
-                        <SelectItem key={`s-${idx}`} value={opt.members[0].id}>
-                          <div className="flex gap-2">
-                            <span>{opt.members[0].name}</span>
-                            <span className="text-muted-foreground">(Pax: {opt.capacity})</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  )}
-
-                  {/* Merges Section */}
-                  {merges.length > 0 && singles.length === 0 && (
-                    <SelectGroup>
-                      <SelectLabel className="uppercase text-muted-foreground tracking-wider">Station Groups</SelectLabel>
-                      {merges.map((opt, idx) => (
-                        <SelectItem key={`m-${idx}`} value={"gId:" + opt.id}>
-                          <div className="flex gap-2">
-                            <span>{opt.members.map(m => m.name).join(' & ')}</span>
-                            <span className="text-muted-foreground">(Pax: {opt.capacity})</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  )}
-                </SelectContent>
-              </Select>
-            )}
+            <AvailableStationSelect
+              pax={reservation.pax}
+              bringsPets={reservation.bringsPets}
+              startsAt={reservation.startsAt}
+              endsAt={reservation.endsAt}
+              enabled={dialogOpen}
+              defaultValue={'members' in reservation.seatedAt ? "gId:" + reservation.seatedAt.id : station.id}
+              onValueChange={saveNewStationAssignment}
+              currentStation={reservation.seatedAt}
+            />
           </div>
         </div>
       </DialogContent>

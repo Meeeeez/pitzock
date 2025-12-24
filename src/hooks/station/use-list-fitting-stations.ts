@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import pb from '@/lib/pocketbase';
-import type { TReservation } from '@/lib/types/reservation';
 import type { TStation } from '@/lib/types/station';
 
 export type TFittingOption = {
@@ -10,18 +9,24 @@ export type TFittingOption = {
   members: TStation[];
 };
 
-export function useListFittingStations(reservation: TReservation, enabled: boolean) {
+export function useListFittingStations(
+  pax: number,
+  bringsPets: boolean,
+  startsAt: string,
+  endsAt: string,
+  enabled: boolean | undefined = true
+) {
   return useQuery({
-    queryKey: ['stationsFittingReservation', reservation],
+    queryKey: ['stationsFittingReservation', pax, bringsPets, startsAt, endsAt],
     queryFn: async (): Promise<TFittingOption[][]> => {
       const businessId = pb.authStore.record?.id;
       if (!businessId) throw new Error("Unauthorized");
 
       const params = {
-        pax: reservation.pax,
-        bringsPets: reservation.bringsPets,
-        start: reservation.startsAt,
-        end: reservation.endsAt,
+        pax,
+        bringsPets,
+        start: startsAt,
+        end: endsAt,
         businessId
       };
 
