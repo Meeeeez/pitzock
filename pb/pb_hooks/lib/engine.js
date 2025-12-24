@@ -7,7 +7,7 @@
  * @returns {Array} Returns an array of areas or [] if no matching areas were found.
  */
 function getSuitableAreas(bringsPets, businessId) {
-  $app.logger().info("SUITABLE_AREAS_CHECK", "bringsPets:", bringsPets)
+  $app.logger().info("SUITABLE_AREAS_CHECK", "bringsPets", bringsPets)
   let areaFilter = "businessId = {:bid} && isActive = true";
   if (bringsPets) areaFilter += " && allowsPets = true";
   const suitableAreas = $app.findRecordsByFilter("areas", areaFilter, "", 0, 0, { bid: businessId })
@@ -16,17 +16,17 @@ function getSuitableAreas(bringsPets, businessId) {
 }
 
 /**
- * Returns the IDs of the stations which are busy at the time of the reservation
- * @param {DateTime} resStart Indicates if the guest brings pets.
- * @param {DateTime} resEnd The ID of the business.
+ * Returns the IDs of the stations which are busy during the provided period
+ * @param {DateTime} start Pocketbase DateTime - period start
+ * @param {DateTime} end Pocketbase DateTime - period end
  * @returns {Set} An Set of IDs of the busy stations or [] if none were found.
  */
-function getBusyStationsIds(resStart, resEnd) {
-  $app.logger().info("BUSY_STATIONS_CHECK", "resStart:", resStart, "resEnd:", resEnd)
+function getBusyStationsIds(start, end) {
+  $app.logger().info("BUSY_STATIONS_CHECK", "start", start, "end", end)
   const ids = $app.findRecordsByFilter(
     "stationReservations",
-    "reservationId.startsAt < {:resEnd} && reservationId.endsAt > {:resStart}",
-    "", 0, 0, { resStart, resEnd }
+    "reservationId.startsAt < {:end} && reservationId.endsAt > {:start}",
+    "", 0, 0, { start, end }
   ).map(r => r.getString("stationId"));
   $app.logger().info("BUSY_STATIONS_RESULT", ids)
   return new Set(ids);
@@ -35,12 +35,12 @@ function getBusyStationsIds(resStart, resEnd) {
 /**
  * Returns all active stations of this area with a capacity larger than pax  which are free during the reservation duration.
  * @param {string} areaId The ID of the area.
- * @param {number} pax The size of the reservation (how many guests are coming).
+ * @param {number} pax The size of the reservation (how many clients are coming).
  * @param {Set} busyIds IDs of the stations which are busy at the time of the reservation
  * @returns {Array} Returns an array of stations or [] if no matching stations were found.
  */
 function getSuitableStations(areaId, pax, busyIds) {
-  $app.logger().info("SUITABLE_STATIONS_CHECK", "areaId:", areaId, "pax:", pax, "busyIds:", busyIds)
+  $app.logger().info("SUITABLE_STATIONS_CHECK", "areaId", areaId, "pax", pax, "busyIds", busyIds)
   let filter = "areaId = {:aId} && capacity >= {:pax} && isActive = true";
   const params = { aId: areaId, pax };
   if (busyIds.size > 0) {
@@ -65,7 +65,7 @@ function getSuitableStations(areaId, pax, busyIds) {
  * @returns {void}
  */
 function assignToStation(stationIds, reservationId) {
-  $app.logger().info("ASSIGN_STATION_START", "reservationId:", reservationId, "targetStations:", stationIds);
+  $app.logger().info("ASSIGN_STATION_START", "reservationId", reservationId, "targetStations", stationIds);
   for (const sId of stationIds) {
     let sr = $app.findCollectionByNameOrId("stationReservations")
     let record = new Record(sr)
@@ -73,18 +73,18 @@ function assignToStation(stationIds, reservationId) {
     record.set("reservationId", reservationId)
     $app.save(record);
   }
-  $app.logger().info("ASSIGN_STATION_SUCCESS", "reservationId:", reservationId, "confirmedIds:", stationIds);
+  $app.logger().info("ASSIGN_STATION_SUCCESS", "reservationId", reservationId, "confirmedIds", stationIds);
 }
 
 /**
 * Returns all mergeGroups which fit the area, have a capacity >= pax and of which all members are free at the time of the reservation 
 * @param {string} areaId The ID of the area.
-* @param {number} pax The size of the reservation (how many guests are coming).
+* @param {number} pax The size of the reservation (how many clients are coming).
 * @param {Set} busyIds IDs of the stations which are busy at the time of the reservation
 * @returns {Array} Returns an array of merge groups or [] if no matching stations were found.
  */
 function getSuitableMergeGroups(areaId, pax, busyIds) {
-  $app.logger().info("MERGE_GROUPS_CHECK", "areaId:", areaId, "pax:", pax);
+  $app.logger().info("MERGE_GROUPS_CHECK", "areaId", areaId, "pax", pax);
   // get all suitable merge groups
   const mergeGroups = $app.findRecordsByFilter("mergeGroups",
     "areaId = {:aId} && capacity >= {:pax}",
@@ -129,7 +129,7 @@ function getSuitableMergeGroups(areaId, pax, busyIds) {
     } else {
       $app.logger().info(
         "MERGE_GROUP_REJECTED",
-        "id:", group.getString("id"),
+        "id", group.getString("id"),
         "reason", !isGroupActive ? "INACTIVE_STATIONS" : "STATIONS_BUSY"
       );
     }
