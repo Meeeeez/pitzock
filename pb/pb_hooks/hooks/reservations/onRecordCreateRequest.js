@@ -30,7 +30,7 @@ onRecordCreateRequest((e) => {
 
     // 5. check if timeslot matches exactly the timeslots offered by the business 
     const step = business.getInt("timeSlotSizeMin")
-    const dayOfWeek = startsAt.getDay()
+    const dayOfWeek = (startsAt.getDay() + 6) % 7;
     const todaySlots = businessOpeningHours[dayOfWeek] || []
     const validTicks = utils.flattenOpeningHours(todaySlots, step)
     const requestedMinsEnd = endsAt.getHours() * 60 + endsAt.getMinutes()
