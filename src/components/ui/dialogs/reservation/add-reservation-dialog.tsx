@@ -169,7 +169,7 @@ export function AddReservationDialog() {
                   </Popover>
                 </div>
                 <TimeSelect
-                  step={2}
+                  step={business?.timeSlotSizeMin}
                   openingHours={business?.openingHours[startDateTime?.getDay() ?? 0]}
                   onSelect={(value) => {
                     if (!startDateTime) return;
