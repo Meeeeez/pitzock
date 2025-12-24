@@ -1,4 +1,4 @@
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { CalendarPlusIcon, ChevronDownIcon } from "lucide-react";
 import { Button } from "../../button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../dialog";
 import { Label } from "../../label";
@@ -23,13 +23,12 @@ export function AddReservationDialog() {
   const createClientMutation = useCreateClient();
   const createReservationMutation = useCreateReservation();
   const { data: business } = useGetBusiness();
-
   const [dialogOpen, setDialogOpen] = useState<boolean>();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
   const [bringsPets, setBringsPets] = useState(false);
-  const [numberOfGuests, setNumberOfGuests] = useState(0);
+  const [numberOfClients, setNumberOfClients] = useState(0);
   const [startDateTime, setStartDateTime] = useState<Date | undefined>(undefined);
   const [startDateTimeSelectOpen, setStartDateTimeSelectOpen] = useState(false);
   const [endDateTime, setEndDateTime] = useState<Date | undefined>(undefined);
@@ -45,17 +44,17 @@ export function AddReservationDialog() {
           return await pb
             .collection("clients")
             .getFirstListItem<TClient>(`businessId="${businessId}" && email="${email}"`);
-        } catch (e) {
+        } catch (err) {
           // ignore if its just the not found error from the query
-          if (e instanceof ClientResponseError && e.status === 404) return null;
-          else throw e;
+          if (err instanceof ClientResponseError && err.status === 404) return null;
+          else throw err;
         }
       },
     });
   }
 
   const createReservation = async () => {
-    if (!name || !email || !numberOfGuests || !startDateTime || !endDateTime) {
+    if (!name || !email || !numberOfClients || !startDateTime || !endDateTime) {
       toast.warning("Please fill out all required fields!");
       return;
     }
@@ -64,13 +63,13 @@ export function AddReservationDialog() {
     const existingClient = await getClientByEmail(email);
     if (existingClient) {
       createReservationMutation.mutate(
-        { clientId: existingClient.id, bringsPets, startsAt: startDateTime, endsAt: endDateTime, notes, pax: numberOfGuests, status: "BOOKED" },
+        { clientId: existingClient.id, bringsPets, startsAt: startDateTime, endsAt: endDateTime, notes, pax: numberOfClients, status: "BOOKED" },
         { onSuccess: () => setDialogOpen(false) }
       );
     } else {
       const newClient = await createClientMutation.mutateAsync({ name, email });
       createReservationMutation.mutate(
-        { clientId: newClient.id, bringsPets, startsAt: startDateTime, endsAt: endDateTime, notes, pax: numberOfGuests, status: "BOOKED" },
+        { clientId: newClient.id, bringsPets, startsAt: startDateTime, endsAt: endDateTime, notes, pax: numberOfClients, status: "BOOKED" },
         { onSuccess: () => setDialogOpen(false) }
       );
     }
@@ -79,8 +78,8 @@ export function AddReservationDialog() {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon />
+        <Button className="w-full">
+          <CalendarPlusIcon />
           New Reservation
         </Button>
       </DialogTrigger>
@@ -119,16 +118,16 @@ export function AddReservationDialog() {
 
             {/* Pax */}
             <div className="flex justify-between items-center">
-              <Label htmlFor="pax">Number of Guests</Label>
+              <Label htmlFor="pax">Number of Clients</Label>
               <Input
                 id="pax"
                 name="pax"
                 type="number"
                 min={1}
-                placeholder="Number of Guests"
+                placeholder="Number of Clients"
                 className="max-w-[300px]"
-                value={numberOfGuests}
-                onChange={(e) => setNumberOfGuests(parseInt(e.target.value))}
+                value={numberOfClients}
+                onChange={(e) => setNumberOfClients(parseInt(e.target.value))}
               />
             </div>
 
@@ -170,6 +169,7 @@ export function AddReservationDialog() {
                 </div>
                 <TimeSelect
                   step={business?.timeSlotSizeMin}
+                  after={startDateTime}
                   openingHours={business?.openingHours[startDateTime?.getDay() ?? 0]}
                   onSelect={(value) => {
                     if (!startDateTime) return;
@@ -220,6 +220,7 @@ export function AddReservationDialog() {
                 </div>
                 <TimeSelect
                   step={business?.timeSlotSizeMin}
+                  after={startDateTime}
                   openingHours={business?.openingHours[endDateTime?.getDay() ?? 0]}
                   defaultValue={endDateTime ? endDateTime.toTimeString().slice(0, 5) : ""}
                   onSelect={(value) => {
