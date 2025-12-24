@@ -6,8 +6,8 @@ function findSuitableMergeGroupsHandler(e) {
     const query = e.request.url.query();
 
     const pax = parseInt(query.get("pax"));
-    const start = query.get("start");
-    const end = query.get("end");
+    const start = new DateTime(query.get("start"));
+    const end = new DateTime(query.get("end"));
     const bringsPets = query.get("bringsPets") === "true";
     const businessId = query.get("businessId");
 
@@ -46,8 +46,8 @@ function findSuitableMergeGroupsHandler(e) {
     // 4. Sort by capacity (ascending) so the most efficient fit is first
     allSuitableMerges.sort((a, b) => a.capacity - b.capacity);
     return e.json(200, allSuitableMerges);
-  } catch (e) {
-    $app.logger().error("An unexpected Error occured:", e.message);
+  } catch (err) {
+    $app.logger().error("An unexpected Error occured:", err.message);
     return e.json(500, { message: "Unexpected Error" });
   }
 }

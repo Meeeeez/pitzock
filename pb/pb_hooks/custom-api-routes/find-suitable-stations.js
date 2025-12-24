@@ -6,8 +6,8 @@ function findSuitableStationsHandler(e) {
     const query = e.request.url.query();
 
     const pax = parseInt(query.get("pax"));
-    const start = query.get("start");
-    const end = query.get("end");
+    const start = new DateTime(query.get("start"));
+    const end = new DateTime(query.get("end"));
     const bringsPets = query.get("bringsPets") === "true";
     const businessId = query.get("businessId");
 
@@ -38,11 +38,13 @@ function findSuitableStationsHandler(e) {
 
       allSuitableStations = allSuitableStations.concat(mapped);
     }
-    // 4. Sort by capacity (ascending) so "best fit" is at the top
-    allSuitableStations.sort((a, b) => a.capacity - b.capacity);
+    // 4. Sort by name
+    allSuitableStations.sort((a, b) => {
+      return a.members[0].getString("name").localeCompare(b.members[0].getString("name"));
+    });
     return e.json(200, allSuitableStations);
-  } catch (e) {
-    $app.logger().error("An unexpected Error occured:", e.message);
+  } catch (err) {
+    $app.logger().error("An unexpected Error occured:", err.message);
     return e.json(500, { message: "Unexpected Error" });
   }
 }

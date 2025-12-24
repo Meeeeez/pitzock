@@ -13,8 +13,8 @@ function reassignStationReservationHandler(e) {
 
     const reservation = $app.findRecordById("reservations", data.reservationId);
     const pax = reservation.getInt("pax");
-    const end = reservation.getString("endsAt");
-    const start = reservation.getString("startsAt");
+    const end = reservation.getDateTime("endsAt");
+    const start = reservation.getDateTime("startsAt");
     const bringsPets = reservation.getBool("bringsPets");
 
     const busyIds = engine.getBusyStationsIds(start, end, data.reservationId);
@@ -81,8 +81,8 @@ function reassignStationReservationHandler(e) {
       });
       return e.json(200);
     }
-  } catch (e) {
-    $app.logger().error("An unexpected Error occured:", e.message);
+  } catch (err) {
+    $app.logger().error("An unexpected Error occured:", err.message);
     return e.json(500, { message: "Unexpected Error" });
   }
 }
