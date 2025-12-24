@@ -13,8 +13,8 @@ export type TBusiness = {
 }
 
 export interface TTimeSlot {
-  start: string // HH:mm format
-  end: string // HH:mm format
+  start: string | undefined // HH:mm format
+  end: string | undefined // HH:mm format
 }
 
 export type TOpeningHours = [TTimeSlot[], TTimeSlot[], TTimeSlot[], TTimeSlot[], TTimeSlot[], TTimeSlot[], TTimeSlot[]]

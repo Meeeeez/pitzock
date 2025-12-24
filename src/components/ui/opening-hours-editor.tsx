@@ -25,7 +25,7 @@ export function OpeningHoursEditor() {
   const addTimeSlotToWeekday = (dayIndex: number) => {
     if (!openingHours) return;
     const oh: TOpeningHours = [...openingHours];
-    oh[dayIndex].push({ start: "--:--", end: "--:--" });
+    oh[dayIndex].push({ start: undefined, end: undefined });
     setOpeningHours(oh);
   }
 
